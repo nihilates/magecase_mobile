@@ -1,0 +1,3 @@
+rootProject.name = 'Magecase'
+
+include ':app'
