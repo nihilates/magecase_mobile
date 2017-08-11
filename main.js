@@ -5,6 +5,7 @@ import {
   Text,
   View
 } from 'react-native';
+import { api } from './components/config.js'; //import configuration data
 
 export default class Main extends Component {
   constructor(props) {
@@ -17,7 +18,7 @@ export default class Main extends Component {
 
   componentDidMount() {
     //test that the server can be called on
-    fetch('http://67.207.82.217:8080/api/items')
+    fetch(api.path+'items')
       .then(resp => resp.json())
       .then(data => this.setState({data}))
       .catch(err => console.error(err));
