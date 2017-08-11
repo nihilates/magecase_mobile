@@ -6,6 +6,8 @@ import {
   View
 } from 'react-native';
 import { api } from './components/config.js'; //import configuration data
+//Import Custom Components//
+import { NavBar } from './components/navbar.js';
 
 export default class Main extends Component {
   constructor(props) {
@@ -27,6 +29,7 @@ export default class Main extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <NavBar />
         <Text style={styles.welcome}>
           Response from Server:
         </Text>
