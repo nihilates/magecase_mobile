@@ -8,8 +8,7 @@ import {
   Text,
   View
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
-//Set and Configure Styles
+import { Actions } from 'react-native-router-flux';
 import styles from './_styles.js';
 
 class Auth extends Component {
@@ -18,8 +17,71 @@ class Auth extends Component {
     this.state = {username: '', password: ''};
   }
 
+  async saveItem(item, selectedValue) {
+    try {
+      await AsyncStorage.setItem(item, selectedValue);
+    } catch (error) {
+      console.error('AsyncStorage error: ' + error.message);
+    }
+  }
+
   userLogin() {
-    Actions.Home();
+    if (!this.state.username || !this.state.password) return;
+
+    fetch('http://192.168.1.168:3001/sessions/create', { //TODO: This is a temporary database. A real one needs to be set up.
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: this.state.username,
+        password: this.state.password,
+      })
+    })
+    .then(response => {
+      if (response.status === 401) {
+        return null;
+      } else {
+        return response.json();
+      }
+    })
+    .then(responseData => {
+      if (responseData === null) {
+        Alert.alert('Incorrect username or password', 'Please try again');
+      } else {
+        this.saveItem('id_token', responseData.id_token);
+        Actions.Home();
+      }
+    })
+    .done();
+  }
+
+  userSignup() {
+    if (!this.state.username || !this.state.password) return;
+
+    fetch('http://192.168.1.168:3001/users', { //TODO: This is a temporary database. A real one needs to be set up.
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: this.state.username,
+        password: this.state.password,
+      })
+    })
+    .then(response => {
+      if (response.status === 400) {
+        return null;
+      } else {
+        return response.json();
+      }
+    })
+    .then(responseData => {
+      if (responseData === null) {
+        Alert.alert('Username already exists!');
+      } else {
+        this.saveItem('id_token', responseData.id_token);
+        Alert.alert( 'Welcome to Magecase!');
+        Actions.Home();
+      }
+    })
+    .done();
   }
 
   render() {
@@ -51,8 +113,12 @@ class Auth extends Component {
           />
         </View>
 
-        <TouchableOpacity onPress={this.userLogin.bind(this)}>
-            <Text style={styles.body}> Log In </Text>
+        <TouchableOpacity style={styles.button} onPress={this.userLogin.bind(this)}>
+            <Text> Log In </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.button} onPress={this.userSignup.bind(this)}>
+            <Text> Sign Up </Text>
         </TouchableOpacity>
       </View>
     )

@@ -20,6 +20,7 @@ class Home extends Component {
   userLogout() {
     Actions.Auth();
   }
+
   render() {
     return (
       <View style={styles.container}>

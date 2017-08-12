@@ -22,8 +22,8 @@ const styles = StyleSheet.create({
     width: 190,
   },
   button: {
-    borderStyle: 'solid',
-    borderColor: 'black',
+    marginBottom: 5,
+    backgroundColor: 'lightgray',
   }
 });
 
