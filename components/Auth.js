@@ -61,7 +61,7 @@ class Auth extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Authentication Page</Text>
+        <Text style={styles.title}>Sign In</Text>
 
         <View>
           <TextInput
@@ -87,12 +87,13 @@ class Auth extends Component {
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={this.userLogin.bind(this)}>
-            <Text> Log In </Text>
+        <TouchableOpacity style={styles.textBtn} onPress={this.userLogin.bind(this)}>
+            <Text style={styles.bold}> Log In </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={this.newUser.bind(this)}>
-            <Text> Sign Up </Text>
+        <TouchableOpacity style={styles.textBtn} onPress={this.newUser.bind(this)}>
+            <Text> New user? </Text>
+            <Text style={styles.bold}>Sign Up!</Text>
         </TouchableOpacity>
       </View>
     )

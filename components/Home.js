@@ -30,7 +30,7 @@ class Home extends Component {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Home Page</Text>
-        <TouchableOpacity style={styles.button} onPress={this.userLogout.bind(this)}>
+        <TouchableOpacity style={styles.textBtn} onPress={this.userLogout.bind(this)}>
             <Text> Log Out </Text>
         </TouchableOpacity>
       </View>

@@ -9,21 +9,20 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    fontWeight: 'bold',
     textAlign: 'center',
     margin: 10,
   },
-  body: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  bold: {
+    fontWeight: 'bold',
   },
   input: {
     height: 50,
     width: 190,
   },
-  button: {
+  textBtn: {
     marginBottom: 5,
-    backgroundColor: 'lightgray',
+    flexDirection: 'row',
   }
 });
 
