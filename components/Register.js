@@ -11,10 +11,10 @@ import {
 import { Actions } from 'react-native-router-flux';
 import styles from './_styles.js';
 
-class Auth extends Component {
+class Register extends Component {
   constructor(props) {
     super(props);
-    this.state = {username: '', password: ''};
+    this.state = {username: null, email: null, password: null, passwordConf: null};
   }
 
   async saveItem(item, selectedValue) {
@@ -25,19 +25,24 @@ class Auth extends Component {
     }
   }
 
-  userLogin() {
-    if (!this.state.username || !this.state.password) return;
+  existingUser() {
+    Actions.Auth();
+  }
 
-    fetch('http://192.168.1.168:3001/sessions/create', { //TODO: This is a temporary database. A real one needs to be set up.
+  userSignup() {
+    if (!this.state.username || !this.state.password || (this.state.password !== this.state.passwordConf)) return;
+
+    fetch('http://192.168.1.168:3001/users', { //TODO: This is a temporary database. A real one needs to be set up.
       method: 'POST',
       headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({
         username: this.state.username,
+        email: this.state.email,
         password: this.state.password,
       })
     })
     .then(response => {
-      if (response.status === 401) {
+      if (response.status === 400) {
         return null;
       } else {
         return response.json();
@@ -45,17 +50,14 @@ class Auth extends Component {
     })
     .then(responseData => {
       if (responseData === null) {
-        Alert.alert('Incorrect username or password', 'Please try again');
+        Alert.alert('Username already exists!');
       } else {
         this.saveItem('id_token', responseData.id_token);
+        Alert.alert( 'Welcome to Magecase!');
         Actions.Home();
       }
     })
     .done();
-  }
-
-  newUser() {
-    Actions.Register();
   }
 
   render() {
@@ -68,7 +70,7 @@ class Auth extends Component {
             editable={true}
             autoCorrect={false}
             onChangeText={(username) => this.setState({username})}
-            placeholder='Username'
+            placeholder='Create Username'
             ref='username'
             returnKeyType='next'
             style={styles.input}
@@ -77,8 +79,29 @@ class Auth extends Component {
           <TextInput
             editable={true}
             autoCorrect={false}
+            onChangeText={(email) => this.setState({email})}
+            placeholder='Enter Email Address'
+            ref='email'
+            returnKeyType='next'
+            style={styles.input}
+            value={this.state.username}
+          />
+          <TextInput
+            editable={true}
+            autoCorrect={false}
             onChangeText={(password) => this.setState({password})}
-            placeholder='Password'
+            placeholder='Create Password'
+            ref='password'
+            returnKeyType='next'
+            secureTextEntry={true}
+            style={styles.input}
+            value={this.state.password}
+          />
+          <TextInput
+            editable={true}
+            autoCorrect={false}
+            onChangeText={(password) => this.setState({passwordConf})}
+            placeholder='Confirm Password'
             ref='password'
             returnKeyType='next'
             secureTextEntry={true}
@@ -86,17 +109,16 @@ class Auth extends Component {
             value={this.state.password}
           />
         </View>
-
-        <TouchableOpacity style={styles.button} onPress={this.userLogin.bind(this)}>
-            <Text> Log In </Text>
+        <TouchableOpacity style={styles.button} onPress={this.userSignup.bind(this)}>
+            <Text> Submit </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={this.newUser.bind(this)}>
-            <Text> Sign Up </Text>
+        <TouchableOpacity style={styles.button} onPress={this.existingUser.bind(this)}>
+            <Text> Log In </Text>
         </TouchableOpacity>
       </View>
     )
   }
 }
 
-export default Auth;
+export default Register;
