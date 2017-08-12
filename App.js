@@ -8,39 +8,45 @@ import Home from './components/Home.js';
 class App extends Component {
   constructor() {
     super();
-    // this.state = {
-    //   hasToken: false,
-    //   isLoaded: false
-    // };
+    this.state = {
+      hasToken: false,
+      isLoaded: false
+    };
   }
 
-  // componentDidMount() {
-  //   AsyncStorage.getItem('id_token').then(token => {
-  //     this.setState({ hasToken: token !== null, isLoaded: true} );
-  //   });
-  // }
+  componentDidMount() {
+    AsyncStorage.getItem('id_token').then(token => {
+      this.setState({ hasToken: token !== null, isLoaded: true} );
+    });
+  }
 
   render() {
-    return(
-      <Router>
-        <Scene key='root'>
-          <Scene
-            component={Auth}
-            hideNavBar={true}
-            initial={true}
-            key='Auth'
-            title='Authentication'
-          />
-          <Scene
-            component={Home}
-            hideNavBar={true}
-            initial={false}
-            key='Home'
-            title='Home Page'
-          />
-        </Scene>
-      </Router>
-    )
+    if (!this.state.isLoaded) {
+      return (
+        <ActivityIndicator />
+      )
+    } else {
+      return(
+        <Router>
+          <Scene key='root'>
+            <Scene
+              component={Auth}
+              hideNavBar={true}
+              initial={!this.state.hasToken}
+              key='Auth'
+              title='Authentication'
+            />
+            <Scene
+              component={Home}
+              hideNavBar={true}
+              initial={this.state.hasToken}
+              key='Home'
+              title='Home Page'
+            />
+          </Scene>
+        </Router>
+      )
+    }
   }
 }
 

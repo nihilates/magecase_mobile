@@ -17,16 +17,21 @@ class Home extends Component {
     this.state = {};
   }
 
-  userLogout() {
-    Actions.Auth();
+  async userLogout() {
+    try {
+      await AsyncStorage.removeItem('id_token');
+      Actions.Auth();
+    } catch (error) {
+      console.log('AsyncStorage error: ' + error.message);
+    }
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Home Page</Text>
-        <TouchableOpacity onPress={this.userLogout.bind(this)}>
-            <Text style={styles.body}> Log Out </Text>
+        <TouchableOpacity style={styles.button} onPress={this.userLogout.bind(this)}>
+            <Text> Log Out </Text>
         </TouchableOpacity>
       </View>
     )
