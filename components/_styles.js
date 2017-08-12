@@ -18,11 +18,13 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
+    height: 50,
     width: 190,
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
+  button: {
+    borderStyle: 'solid',
+    borderColor: 'black',
+  }
 });
 
 module.exports = styles;

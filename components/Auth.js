@@ -27,24 +27,26 @@ class Auth extends Component {
       <View style={styles.container}>
         <Text style={styles.title}>Authentication Page</Text>
 
-        <View style={styles.input}>
+        <View>
           <TextInput
             editable={true}
+            autoCorrect={false}
             onChangeText={(username) => this.setState({username})}
             placeholder='Username'
             ref='username'
             returnKeyType='next'
-            // style={styles.input}
+            style={styles.input}
             value={this.state.username}
           />
           <TextInput
             editable={true}
+            autoCorrect={false}
             onChangeText={(password) => this.setState({password})}
             placeholder='Password'
             ref='password'
             returnKeyType='next'
             secureTextEntry={true}
-            // style={styles.input}
+            style={styles.input}
             value={this.state.password}
           />
         </View>
