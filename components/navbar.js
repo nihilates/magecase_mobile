@@ -15,7 +15,7 @@ class NavBar extends Component {
   render() {
     return (
       <View>
-        <Text>Welcome to MageCase!</Text>
+        <Text>Navbar Component</Text>
       </View>
     )
   }

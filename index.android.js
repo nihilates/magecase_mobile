@@ -5,12 +5,12 @@ import {
   Text,
   View
 } from 'react-native';
-import Main from './main.js';
+import App from './App.js';
 
 export default class Magecase extends Component {
   render() {
     return (
-      <Main />
+      <App />
     );
   }
 }
