@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import styles from '../_styles.js';
+//import api configurations
+import { path, api } from '../_config.js';
 
 class Signup extends Component {
   constructor(props) {
@@ -33,12 +35,12 @@ class Signup extends Component {
       Alert.alert('Your passwords don\'t match!');
       return;
     } else {
-      fetch('http://192.168.1.168:3001/users', { //TODO: This is a temporary database. A real one needs to be set up.
+      fetch(path+api.user.signup, {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: this.state.username,
-          email: this.state.email,
+          user_name: this.state.username,
+          user_email: this.state.email,
           password: this.state.password,
         })
       })
@@ -53,7 +55,7 @@ class Signup extends Component {
         if (responseData === null) {
           Alert.alert('Username already exists!');
         } else {
-          this.saveItem('id_token', responseData.id_token);
+          this.saveItem('id_token', responseData.auth.id_token);
           Alert.alert( 'Welcome to Magecase!');
           Actions.Home();
         }

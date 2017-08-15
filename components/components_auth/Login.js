@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import styles from '../_styles.js';
+//import api configurations
+import { path, api } from '../_config.js';
 
 class Login extends Component {
   constructor(props) {
@@ -29,14 +31,7 @@ class Login extends Component {
     console.log(this.props)
     if (!this.state.username || !this.state.password) return;
 
-    fetch('http://192.168.1.168:3001/sessions/create', { //TODO: This is a temporary database. A real one needs to be set up.
-      method: 'POST',
-      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: this.state.username,
-        password: this.state.password,
-      })
-    })
+    fetch(path+api.user.login+'?identity='+this.state.username+'&password='+this.state.password)
     .then(response => {
       if (response.status === 401) {
         return null;
@@ -48,7 +43,7 @@ class Login extends Component {
       if (responseData === null) {
         Alert.alert('Incorrect username or password', 'Please try again');
       } else {
-        this.saveItem('id_token', responseData.id_token);
+        this.saveItem('id_token', responseData.auth.id_token);
         Actions.Home();
       }
     })

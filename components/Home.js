@@ -10,11 +10,15 @@ import {
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import styles from './_styles.js';
+//import api configurations
+import { path, api } from './_config.js';
 
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      accounts: []
+    };
   }
 
   async userLogout() {
@@ -27,20 +31,16 @@ class Home extends Component {
   }
 
   async getProtected() {
-  // getProtected() {
-    console.log(this.props.token);
-    var fake = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6IjExIiwiaWQiOjIsImlhdCI6MTUwMjgwNTkxMiwiZXhwIjoxNTAyODIzOTEyfQ.APZHJHm5MY2bMw4E5Sh83XUWXT_MQlviz__jf83hdj2'
     var token = await AsyncStorage.getItem('id_token');
-    fetch("http://localhost:3001/api/protected/random-quote", {
+    fetch(path+api.user.test, {
       method: "GET",
       headers: {
         'Authorization': 'Bearer ' + token
-        // 'Authorization': 'Bearer ' + fake
       }
     })
     .then((resp) => resp.json())
     .then((data) => {
-      console.log(data)
+      this.setState({accounts: data});
     })
     .done();
   }
@@ -56,6 +56,15 @@ class Home extends Component {
         <TouchableOpacity style={styles.textBtn} onPress={this.getProtected.bind(this)}>
             <Text> Check Token </Text>
         </TouchableOpacity>
+
+        <View>
+          {this.state.accounts.map((account, i) => {
+            return (
+              <Text key={i}>{account.user_name} _> {account.user_email}</Text>
+            )
+          })}
+        </View>
+
       </View>
     )
   }

@@ -15,9 +15,8 @@ class App extends Component {
     };
   }
 
-  componentDidMount() {
-    AsyncStorage.getItem('id_token').then(token => {
-      console.log('APP TOKEN:',token);
+  async componentDidMount() {
+    await AsyncStorage.getItem('id_token').then(token => {
       this.setState({ hasToken: token !== null, isLoaded: true, token: token} );
     });
   }
