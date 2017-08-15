@@ -11,13 +11,15 @@ class App extends Component {
     super();
     this.state = {
       hasToken: false,
-      isLoaded: false
+      isLoaded: false,
+      token: null
     };
   }
 
   componentDidMount() {
     AsyncStorage.getItem('id_token').then(token => {
-      this.setState({ hasToken: token !== null, isLoaded: true} );
+      console.log('APP TOKEN:',token);
+      this.setState({ hasToken: token !== null, isLoaded: true, token: token} );
     });
   }
 
@@ -34,6 +36,7 @@ class App extends Component {
               component={Auth}
               hideNavBar={true}
               initial={!this.state.hasToken}
+              token={this.state.token}
               key='Auth'
               title='Authentication'
             />
@@ -47,6 +50,7 @@ class App extends Component {
               component={Home}
               hideNavBar={true}
               initial={this.state.hasToken}
+              token={this.state.token}
               key='Home'
               title='Home Page'
             />

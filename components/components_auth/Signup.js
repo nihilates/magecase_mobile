@@ -9,9 +9,9 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import styles from './_styles.js';
+import styles from '../_styles.js';
 
-class Register extends Component {
+class Signup extends Component {
   constructor(props) {
     super(props);
     this.state = {username: null, email: null, password: null, pwdConfirm: null};
@@ -23,10 +23,6 @@ class Register extends Component {
     } catch (error) {
       console.error('AsyncStorage error: ' + error.message);
     }
-  }
-
-  existingUser() {
-    Actions.Auth();
   }
 
   userSignup() {
@@ -118,14 +114,9 @@ class Register extends Component {
         <TouchableOpacity style={styles.textBtn} onPress={this.userSignup.bind(this)}>
             <Text style={styles.bold}> Submit </Text>
         </TouchableOpacity>
-
-        <TouchableOpacity style={styles.textBtn} onPress={this.existingUser.bind(this)}>
-            <Text> Existing user? </Text>
-            <Text style={styles.bold}>Login!</Text>
-        </TouchableOpacity>
       </View>
     )
   }
 }
 
-export default Register;
+export default Signup;
