@@ -4,6 +4,8 @@ import {Router, Scene} from 'react-native-router-flux';
 //IMPORT PAGES//
 import Auth from './components/Auth.js';
 import Home from './components/Home.js';
+import CharDetails from './components/CharDetails.js';
+import GameDetails from './components/GameDetails.js'
 
 class App extends Component {
   constructor() {
@@ -44,6 +46,20 @@ class App extends Component {
               token={this.state.token}
               key='Home'
               title='Home Page'
+            />
+            <Scene
+              component={CharDetails}
+              hideNavBar={true}
+              token={this.state.token}
+              key='CharDetails'
+              title='Character Details'
+            />
+            <Scene
+              component={GameDetails}
+              hideNavBar={true}
+              token={this.state.token}
+              key='GameDetails'
+              title='Game Details'
             />
           </Scene>
         </Router>

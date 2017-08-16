@@ -1,3 +1,4 @@
+//Landing Page after authentication.
 import React, { Component } from 'react';
 import {
   Alert,
@@ -45,6 +46,14 @@ class Home extends Component {
     .done();
   }
 
+  navChar() { //Temporary Nav button for testing purposes
+    Actions.CharDetails();
+  }
+
+  navGame() { //Temporary Nav button for testing purposes
+    Actions.GameDetails();
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -64,6 +73,13 @@ class Home extends Component {
             )
           })}
         </View>
+
+        <TouchableOpacity style={styles.textBtn} onPress={this.navChar.bind(this)}>
+            <Text> Characters </Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.textBtn} onPress={this.navGame.bind(this)}>
+            <Text> Games </Text>
+        </TouchableOpacity>
 
       </View>
     )
