@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import styles from './_styles.js';
-import { binaryRender } from './utilities/util.js';
+import { binaryRender } from './_util.js';
 /*import custom components*/
 import Login from './components_auth/Login.js';
 import Signup from './components_auth/Signup.js';

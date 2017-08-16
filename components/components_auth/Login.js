@@ -59,8 +59,9 @@ class Login extends Component {
           <TextInput
             editable={true}
             autoCorrect={false}
+            autoCapitalize={'none'}
             onChangeText={(username) => this.setState({username})}
-            placeholder='Username'
+            placeholder='Username or Email'
             ref='username'
             returnKeyType='next'
             style={styles.input}
@@ -74,6 +75,7 @@ class Login extends Component {
             ref='password'
             returnKeyType='next'
             secureTextEntry={true}
+            clearTextOnFocus={true}
             style={styles.input}
             value={this.state.password}
           />

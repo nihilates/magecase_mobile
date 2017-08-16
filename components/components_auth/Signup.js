@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import styles from '../_styles.js';
+import { chkUName, chkEmail, chkPwd } from '../_util.js';
 //import api configurations
 import { path, api } from '../_config.js';
 
@@ -29,10 +30,16 @@ class Signup extends Component {
 
   userSignup() {
     if (!this.state.username || !this.state.password || !this.state.email) {
-      Alert.alert('Please complete all forms!');
+      Alert.alert('Error', 'Please complete all forms!');
       return;
-    } else if (this.state.password !== this.state.pwdConfirm) {
-      Alert.alert('Your passwords don\'t match!');
+    } else if (chkPwd(this.state.password, this.state.pwdConfirm).invalid) {
+      Alert.alert('Error', chkPwd(this.state.password, this.state.pwdConfirm).message);
+      return;
+    } else if (chkEmail(this.state.email).invalid){
+      Alert.alert('Error', 'Please enter a valid email address');
+      return;
+    } else if (chkUName(this.state.username).invalid) {
+      Alert.alert('Error', chkUName(this.state.username).message);
       return;
     } else {
       fetch(path+api.user.signup, {
@@ -40,7 +47,7 @@ class Signup extends Component {
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_name: this.state.username,
-          user_email: this.state.email,
+          user_email: this.state.email.toLowerCase(),
           password: this.state.password,
         })
       })
@@ -73,6 +80,8 @@ class Signup extends Component {
           <TextInput
             editable={true}
             autoCorrect={false}
+            autoCapitalize={'none'}
+            maxLength={22}
             onChangeText={(username) => this.setState({username})}
             placeholder='Create Username'
             ref='username'
@@ -83,7 +92,9 @@ class Signup extends Component {
           <TextInput
             editable={true}
             autoCorrect={false}
+            autoCapitalize={'none'}
             onChangeText={(email) => this.setState({email})}
+            keyboardType={'email-address'}
             placeholder='Enter Email Address'
             ref='email'
             returnKeyType='next'

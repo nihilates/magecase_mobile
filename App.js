@@ -34,7 +34,6 @@ class App extends Component {
               component={Auth}
               hideNavBar={true}
               initial={!this.state.hasToken}
-              token={this.state.token}
               key='Auth'
               title='Authentication'
             />
