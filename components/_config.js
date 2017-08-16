@@ -7,6 +7,7 @@ module.exports = {
     user: {
       login: '/api/users/login',
       signup: '/api/users/signup',
+      items: '/api/auth/items',
       test: '/api/auth/users/getall'
     }
   }

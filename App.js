@@ -5,7 +5,8 @@ import {Router, Scene} from 'react-native-router-flux';
 import Auth from './components/Auth.js';
 import Home from './components/Home.js';
 import CharDetails from './components/CharDetails.js';
-import GameDetails from './components/GameDetails.js'
+import GameDetails from './components/GameDetails.js';
+import Items from './components/Items.js';
 
 class App extends Component {
   constructor() {
@@ -60,6 +61,13 @@ class App extends Component {
               token={this.state.token}
               key='GameDetails'
               title='Game Details'
+            />
+            <Scene
+              component={Items}
+              hideNavBar={true}
+              token={this.state.token}
+              key='Items'
+              title='Items'
             />
           </Scene>
         </Router>

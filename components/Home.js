@@ -54,6 +54,10 @@ class Home extends Component {
     Actions.GameDetails();
   }
 
+  navItems() { //Temporary Nav button for testing purposes
+    Actions.Items();
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -74,6 +78,9 @@ class Home extends Component {
           })}
         </View>
 
+        <TouchableOpacity style={styles.textBtn} onPress={this.navItems.bind(this)}>
+            <Text> Items </Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.textBtn} onPress={this.navChar.bind(this)}>
             <Text> Characters </Text>
         </TouchableOpacity>
