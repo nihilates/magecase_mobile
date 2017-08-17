@@ -73,7 +73,7 @@ class Signup extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <Text style={styles.title}>Sign Up</Text>
 
         <View>

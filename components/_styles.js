@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
+  //Main Styles
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -23,6 +24,18 @@ const styles = StyleSheet.create({
   textBtn: {
     marginBottom: 5,
     flexDirection: 'row',
+  },
+  //List Styles
+  scroll: {
+    marginBottom: 5,
+    flexDirection: 'row',
+    width: 200
+  },
+  //Modal Styles
+  modContainer: {
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center'
   }
 });
 

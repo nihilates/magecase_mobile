@@ -10,21 +10,38 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import Modal from 'react-native-modal';
 import styles from './_styles.js';
 //import api configurations
 import { path, api } from './_config.js';
+//import custom components
+import ItemDetails from './components_char/ItemDetails.js';
 
 class Items extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoaded: false,
-      items: []
+      items: [],
+      modalVisible: false,
+      modalData: {}
     };
   }
 
   backHome() {
     Actions.Home();
+  }
+
+  openModal() {
+    this.setState({modalVisible: true});
+  }
+
+  closeModal() {
+    this.setState({modalVisible: false});
+  }
+
+  setModalData(data) {
+    this.setState({modalData: data})
   }
 
   async componentDidMount() {
@@ -40,7 +57,7 @@ class Items extends Component {
       }
     })
     .then(resp => resp.json())
-    .then(data => this.setState({items: data}))
+    .then(data => this.setState({items: data, modalData: data[0]}))
     .done();
   }
 
@@ -58,7 +75,14 @@ class Items extends Component {
             {this.state.items.map((item, i) => {
               return (
                 <View key={i}>
-                  <Text style={styles.bold}>{item.item_name} deals {item.dice_count} d{item.dice_type} {item.damageType} damage </Text>
+                  <TouchableOpacity style={styles.scroll}
+                    onPress={()=> {
+                      this.setModalData(item);
+                      this.openModal();
+                    }
+                  }>
+                      <Text style={styles.bold}>{item.item_name}</Text>
+                  </TouchableOpacity>
                 </View>
               )
             })}
@@ -67,6 +91,15 @@ class Items extends Component {
           <TouchableOpacity style={styles.textBtn} onPress={this.backHome.bind(this)}>
               <Text style={styles.bold}> Back </Text>
           </TouchableOpacity>
+
+          <Modal isVisible={this.state.modalVisible}>
+            <View>
+              <ItemDetails
+                closeModal={this.closeModal.bind(this)}
+                item={this.state.modalData}
+              />
+            </View>
+          </Modal>
         </View>
     )}
   }

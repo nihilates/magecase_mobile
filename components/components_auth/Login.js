@@ -52,7 +52,7 @@ class Login extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <Text style={styles.title}>Sign In</Text>
 
         <View>
