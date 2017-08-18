@@ -37,11 +37,13 @@ class Login extends Component {
         return response.json();
       }
     })
-    .then(responseData => {
-      if (responseData === null) {
+    .then(data => {
+      if (data === null) {
         Alert.alert('Incorrect username or password', 'Please try again');
       } else {
-        this.saveItem('id_token', responseData.auth.id_token);
+        // this.saveItem('id_token', data.auth.id_token);
+        // this.saveItem('user_data', JSON.stringify(data.userData)); //save userdata object as a string, to parse out later
+        this.saveItem('session', JSON.stringify(data));
         Actions.Home();
       }
     })

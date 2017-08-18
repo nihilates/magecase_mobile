@@ -12,15 +12,20 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      hasToken: false,
+      hasData: false,
       isLoaded: false,
-      token: null
+      token: null,
+      userData: null,
     };
   }
 
   async componentDidMount() {
-    await AsyncStorage.getItem('id_token').then(token => {
-      this.setState({ hasToken: token !== null, isLoaded: true, token: token} );
+    //get the token, if one exists
+    await AsyncStorage.getItem('session').then(session => {
+      let data = JSON.parse(session);
+      let idToken = data.auth.id_token;
+
+      this.setState({ hasData: idToken !== null, token: idToken, userData: data.userData, isLoaded: true });
     });
   }
 
@@ -36,15 +41,16 @@ class App extends Component {
             <Scene
               component={Auth}
               hideNavBar={true}
-              initial={!this.state.hasToken}
+              initial={!this.state.hasData}
               key='Auth'
               title='Authentication'
             />
             <Scene
               component={Home}
               hideNavBar={true}
-              initial={this.state.hasToken}
+              initial={this.state.hasData}
               token={this.state.token}
+              userData={this.state.userData}
               key='Home'
               title='Home Page'
             />
@@ -59,6 +65,7 @@ class App extends Component {
               component={GameDetails}
               hideNavBar={true}
               token={this.state.token}
+              userData={this.state.userData}
               key='GameDetails'
               title='Game Details'
             />
@@ -66,6 +73,7 @@ class App extends Component {
               component={Items}
               hideNavBar={true}
               token={this.state.token}
+              userData={this.state.userData}
               key='Items'
               title='Items'
             />
