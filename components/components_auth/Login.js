@@ -9,7 +9,6 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import styles from '../_styles.js';
 //import api configurations
 import { path, api } from '../_config.js';
 
@@ -28,7 +27,6 @@ class Login extends Component {
   }
 
   userLogin() {
-    console.log(this.props)
     if (!this.state.username || !this.state.password) return;
 
     fetch(path+api.user.login+'?identity='+this.state.username+'&password='+this.state.password)
@@ -52,8 +50,8 @@ class Login extends Component {
 
   render() {
     return (
-      <View>
-        <Text style={styles.title}>Sign In</Text>
+      <View style={s.container}>
+        <Text style={s.title}>Sign In</Text>
 
         <View>
           <TextInput
@@ -64,7 +62,7 @@ class Login extends Component {
             placeholder='Username or Email'
             ref='username'
             returnKeyType='next'
-            style={styles.input}
+            style={s.input}
             value={this.state.username}
           />
           <TextInput
@@ -76,13 +74,13 @@ class Login extends Component {
             returnKeyType='next'
             secureTextEntry={true}
             clearTextOnFocus={true}
-            style={styles.input}
+            style={s.input}
             value={this.state.password}
           />
         </View>
 
-        <TouchableOpacity style={styles.textBtn} onPress={this.userLogin.bind(this)}>
-            <Text style={styles.bold}> Log In </Text>
+        <TouchableOpacity onPress={this.userLogin.bind(this)}>
+            <Text style={s.textBtn}> Log In </Text>
         </TouchableOpacity>
 
       </View>
@@ -91,3 +89,25 @@ class Login extends Component {
 }
 
 export default Login;
+
+const s = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    height: 50,
+    width: 190,
+  },
+  textBtn: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    flexDirection: 'row',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 10,
+  },
+});

@@ -1,32 +1,19 @@
 import React, { Component } from 'react';
 import {
-  ActivityIndicator,
-  AsyncStorage,
   TouchableOpacity,
   StyleSheet,
   Text,
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import styles from '../_styles.js';
 //import api configurations
 import { path, api } from '../_config.js';
 
 class ItemDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLoaded: false,
-      // mainType: ''
-    };
+    this.state = {};
   }
-
-  // componentDidMount() {
-  //   fetch(path+api.item.type+'?typeId=1')
-  //   .then(resp => resp.json())
-  //   .then(data => this.setState({mainType: data.type_name}))
-  //   .done();
-  // }
 
   render() {
     return (

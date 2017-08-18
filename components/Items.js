@@ -11,7 +11,6 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modal';
-import styles from './_styles.js';
 //import api configurations
 import { path, api } from './_config.js';
 //import custom components
@@ -68,28 +67,28 @@ class Items extends Component {
       )
     } else {
       return(
-        <View style={styles.container}>
-          <Text style={styles.title}>Items</Text>
+        <View style={s.container}>
+          <Text style={s.title}>Items</Text>
 
           <ScrollView>
             {this.state.items.map((item, i) => {
               return (
                 <View key={i}>
-                  <TouchableOpacity style={styles.scroll}
+                  <TouchableOpacity style={s.listItem}
                     onPress={()=> {
                       this.setModalData(item);
                       this.openModal();
                     }
                   }>
-                      <Text style={styles.bold}>{item.item_name}</Text>
+                      <Text style={s.textBtn}>{item.item_name}</Text>
                   </TouchableOpacity>
                 </View>
               )
             })}
           </ScrollView>
 
-          <TouchableOpacity style={styles.textBtn} onPress={this.backHome.bind(this)}>
-              <Text style={styles.bold}> Back </Text>
+          <TouchableOpacity onPress={this.backHome.bind(this)}>
+              <Text style={s.textBtn}> Back </Text>
           </TouchableOpacity>
 
           <Modal isVisible={this.state.modalVisible}>
@@ -106,3 +105,32 @@ class Items extends Component {
 }
 
 export default Items;
+
+const s = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'hsl(215, 80%, 95%)',
+  },
+  input: {
+    height: 50,
+    width: 190,
+  },
+  textBtn: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    flexDirection: 'row',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 10,
+  },
+  listItem: {
+    marginBottom: 5,
+    flexDirection: 'row',
+    width: 200
+  },
+});

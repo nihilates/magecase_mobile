@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage, Text} from 'react-native';
+import {ActivityIndicator, AsyncStorage} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
 //IMPORT PAGES//
 import Auth from './components/Auth.js';

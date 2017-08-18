@@ -10,9 +10,12 @@ import {
   View
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import styles from './_styles.js';
 //import api configurations
 import { path, api } from './_config.js';
+//import custom components
+import MainNav from './MainNav.js';
+import Characters from './components_home/Characters.js';
+import HomeNav from './components_home/HomeNav.js';
 
 class Home extends Component {
   constructor(props) {
@@ -31,12 +34,11 @@ class Home extends Component {
     }
   }
 
-  async getProtected() {
-    var token = await AsyncStorage.getItem('id_token');
+  getProtected() {
     fetch(path+api.user.test, {
       method: "GET",
       headers: {
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + this.props.token
       }
     })
     .then((resp) => resp.json())
@@ -60,32 +62,20 @@ class Home extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Home Page</Text>
-        <TouchableOpacity style={styles.textBtn} onPress={this.userLogout.bind(this)}>
-            <Text> Log Out </Text>
-        </TouchableOpacity>
+      <View style={s.container}>
+        <MainNav />
+        <HomeNav />
+        <Text style={s.title}>Home Page</Text>
+        <Characters />
 
-        <TouchableOpacity style={styles.textBtn} onPress={this.getProtected.bind(this)}>
-            <Text> Check Token </Text>
+        <TouchableOpacity onPress={this.navItems.bind(this)}>
+            <Text style={s.textBtn}> Items </Text>
         </TouchableOpacity>
-
-        <View>
-          {this.state.accounts.map((account, i) => {
-            return (
-              <Text key={i}>{account.user_name} _> {account.user_email}</Text>
-            )
-          })}
-        </View>
-
-        <TouchableOpacity style={styles.textBtn} onPress={this.navItems.bind(this)}>
-            <Text> Items </Text>
+        <TouchableOpacity onPress={this.navChar.bind(this)}>
+            <Text style={s.textBtn}> Characters </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.textBtn} onPress={this.navChar.bind(this)}>
-            <Text> Characters </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.textBtn} onPress={this.navGame.bind(this)}>
-            <Text> Games </Text>
+        <TouchableOpacity onPress={this.navGame.bind(this)}>
+            <Text style={s.textBtn}> Games </Text>
         </TouchableOpacity>
 
       </View>
@@ -94,3 +84,28 @@ class Home extends Component {
 }
 
 export default Home;
+
+const s = StyleSheet.create({
+  container: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'hsl(215, 80%, 95%)',
+  },
+  input: {
+    height: 50,
+    width: 190,
+  },
+  textBtn: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    flexDirection: 'row',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 10,
+  },
+});

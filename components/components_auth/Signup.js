@@ -9,7 +9,6 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import styles from '../_styles.js';
 import { chkUName, chkEmail, chkPwd } from '../_util.js';
 //import api configurations
 import { path, api } from '../_config.js';
@@ -73,8 +72,8 @@ class Signup extends Component {
 
   render() {
     return (
-      <View>
-        <Text style={styles.title}>Sign Up</Text>
+      <View style={s.container}>
+        <Text style={s.title}>Sign Up</Text>
 
         <View>
           <TextInput
@@ -86,7 +85,7 @@ class Signup extends Component {
             placeholder='Create Username'
             ref='username'
             returnKeyType='next'
-            style={styles.input}
+            style={s.input}
             value={this.state.username}
           />
           <TextInput
@@ -98,7 +97,7 @@ class Signup extends Component {
             placeholder='Enter Email Address'
             ref='email'
             returnKeyType='next'
-            style={styles.input}
+            style={s.input}
             value={this.state.email}
           />
           <TextInput
@@ -109,7 +108,7 @@ class Signup extends Component {
             ref='password'
             returnKeyType='next'
             secureTextEntry={true}
-            style={styles.input}
+            style={s.input}
             value={this.state.password}
           />
           <TextInput
@@ -120,12 +119,12 @@ class Signup extends Component {
             ref='pwdConfirm'
             returnKeyType='next'
             secureTextEntry={true}
-            style={styles.input}
+            style={s.input}
             value={this.state.passwordConf}
           />
         </View>
-        <TouchableOpacity style={styles.textBtn} onPress={this.userSignup.bind(this)}>
-            <Text style={styles.bold}> Submit </Text>
+        <TouchableOpacity onPress={this.userSignup.bind(this)}>
+            <Text style={s.textBtn}> Submit </Text>
         </TouchableOpacity>
       </View>
     )
@@ -133,3 +132,25 @@ class Signup extends Component {
 }
 
 export default Signup;
+
+const s = StyleSheet.create({
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  input: {
+    height: 50,
+    width: 190,
+  },
+  textBtn: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    flexDirection: 'row',
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 10,
+  },
+});

@@ -9,7 +9,6 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import styles from './_styles.js';
 import { binaryRender } from './_util.js';
 /*import custom components*/
 import Login from './components_auth/Login.js';
@@ -19,7 +18,7 @@ class Auth extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasAccount: true
+      hasAccount: true //toggle for "login" or "create account"
     };
   }
 
@@ -29,10 +28,10 @@ class Auth extends Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={s.container}>
         {binaryRender(this.state.hasAccount, <Login />, <Signup />)}
-        <TouchableOpacity style={styles.textBtn} onPress={this.accessMethod.bind(this)}>
-            <Text style={styles.bold}>{this.state.hasAccount ? 'Create Account' : 'Login Account'}</Text>
+        <TouchableOpacity onPress={this.accessMethod.bind(this)}>
+            <Text style={s.textBtn}>{this.state.hasAccount ? 'Create Account' : 'Login Account'}</Text>
         </TouchableOpacity>
       </View>
     )
@@ -40,3 +39,17 @@ class Auth extends Component {
 }
 
 export default Auth;
+
+const s = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'hsl(215, 80%, 95%)',
+  },
+  textBtn: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+    flexDirection: 'row',
+  }
+});
