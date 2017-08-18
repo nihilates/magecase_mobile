@@ -30,12 +30,14 @@ class MainNav extends Component {
     return (
       <View style={s.container}>
         <View>
-          <Text>Other</Text>
+          <TouchableOpacity onPress={this.props.switchView}>
+            <Text style={s.textBtn}>{this.props.view ? 'Games' : 'Characters'}</Text>
+          </TouchableOpacity>
         </View>
 
         <View>
           <TouchableOpacity onPress={this.userLogout.bind(this)}>
-              <Text style={s.textBtn}> Log Out </Text>
+            <Text style={s.textBtn}> Log Out </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -47,6 +49,7 @@ export default MainNav;
 
 const s = StyleSheet.create({
   container: {
+    marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

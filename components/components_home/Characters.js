@@ -1,3 +1,4 @@
+//Display component of characters belonging to a logged in user
 import React, { Component } from 'react';
 import {
   TouchableOpacity,
@@ -18,7 +19,7 @@ class Characters extends Component {
   render() {
     return (
       <View style={s.container}>
-        <Text>List of Characters</Text>
+        <Text style={s.title}>Characters</Text>
       </View>
     )
   }
@@ -28,8 +29,15 @@ export default Characters;
 
 const s = StyleSheet.create({
   container: {
+    marginTop: 20,
     backgroundColor: 'hsla(180, 80%, 100%, 0.5)',
     width: '90%',
     height: 300,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    margin: 10,
   },
 });
