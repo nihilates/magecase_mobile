@@ -22,7 +22,9 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoaded: false,
       view: true, //toggles between Character list and Games list; default is characters
+      elements: [], //empty array to store element data, such as characters or games to list
     };
   }
 
@@ -34,7 +36,9 @@ class Home extends Component {
     return (
       <View style={s.container}>
         <MainNav view={this.state.view} switchView={this.switchView.bind(this)}/>
-        {binaryRender(this.state.view,<Characters token={this.props.token}/>,<Games token={this.props.token}/>)}
+        {binaryRender(this.state.view,
+          <Characters userData={this.props.userData} token={this.props.token}/>,
+          <Games token={this.props.token}/>)}
       </View>
     )
   }

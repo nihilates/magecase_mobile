@@ -7,13 +7,14 @@ module.exports = {
     user: {
       login: '/api/users/login',
       signup: '/api/users/signup',
-      items: '/api/auth/items',
-      test: '/api/auth/users/getall'
     },
     item: {
       all: '/api/auth/items',
       type: '/api/items/type',
       subType: '/api/items/subtype'
+    },
+    char: {
+      all: '/api/chars'
     }
   }
 }
