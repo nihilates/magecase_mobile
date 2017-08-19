@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { chkUName, chkEmail, chkPwd } from '../_util.js';
+import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
 
@@ -27,7 +28,7 @@ class Signup extends Component {
     }
   }
 
-  userSignup() {
+  async userSignup() {
     if (!this.state.username || !this.state.password || !this.state.email) {
       Alert.alert('Error', 'Please complete all forms!');
       return;
@@ -41,32 +42,22 @@ class Signup extends Component {
       Alert.alert('Error', chkUName(this.state.username).message);
       return;
     } else {
-      fetch(path+api.user.signup, {
-        method: 'POST',
-        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_name: this.state.username,
-          user_email: this.state.email.toLowerCase(),
-          password: this.state.password,
-        })
+      axios.post(path+api.user.signup, {
+        user_name: this.state.username,
+        user_email: this.state.email.toLowerCase(),
+        password: this.state.password
       })
-      .then(response => {
-        if (response.status === 400) {
-          return null;
-        } else {
-          return response.json();
-        }
-      })
-      .then(responseData => {
-        if (responseData === null) {
-          Alert.alert('Username already exists!');
-        } else {
-          this.saveItem('id_token', responseData.auth.id_token);
-          Alert.alert( 'Welcome to Magecase!');
+      .then(res => {
+        if (res.status === 200) {
+          this.saveItem('session', JSON.stringify(res.data))
           Actions.Home();
+        } else if (res.status === 204) {
+          Alert.alert('An account already exists for that username.');
+        } else {
+          Alert.alert('Something went wrong', 'Please restart the app.')
         }
       })
-      .done();
+      .catch(error => console.error(error));
     }
   }
 

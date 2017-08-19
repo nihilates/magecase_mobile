@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
 
@@ -26,28 +27,27 @@ class Login extends Component {
     }
   }
 
-  userLogin() {
+  async userLogin() {
     if (!this.state.username || !this.state.password) return;
 
-    fetch(path+api.user.login+'?identity='+this.state.username+'&password='+this.state.password)
-    .then(response => {
-      if (response.status === 401) {
-        return null;
-      } else {
-        return response.json();
+    // axios.get(path+api.user.login+'?identity='+this.state.username+'&password='+this.state.password)
+    axios.get(path+api.user.login, {
+      params: {
+        identity: this.state.username,
+        password: this.state.password
       }
     })
-    .then(data => {
-      if (data === null) {
-        Alert.alert('Incorrect username or password', 'Please try again');
-      } else {
-        // this.saveItem('id_token', data.auth.id_token);
-        // this.saveItem('user_data', JSON.stringify(data.userData)); //save userdata object as a string, to parse out later
-        this.saveItem('session', JSON.stringify(data));
+    .then(res => {
+      if (res.status === 200) {
+        this.saveItem('session', JSON.stringify(res.data))
         Actions.Home();
+      } else if (res.status === 204) {
+        Alert.alert('Incorrect username or password', 'Please try again.');
+      } else {
+        Alert.alert('Something went wrong', 'Please restart the app.')
       }
     })
-    .done();
+    .catch(error => console.error(error));
   }
 
   render() {

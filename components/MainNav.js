@@ -19,7 +19,7 @@ class MainNav extends Component {
 
   async userLogout() {
     try {
-      await AsyncStorage.removeItem('id_token');
+      await AsyncStorage.removeItem('session');
       Actions.Auth();
     } catch (error) {
       console.log('AsyncStorage error: ' + error.message);

@@ -15,6 +15,9 @@ module.exports = {
     },
     char: {
       all: '/api/chars'
+    },
+    game: {
+      all: '/api/games'
     }
   }
 }

@@ -1,6 +1,7 @@
 //Landing Page after authentication.
 import React, { Component } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   AsyncStorage,
   TextInput,
@@ -23,6 +24,8 @@ class Home extends Component {
     super(props);
     this.state = {
       isLoaded: false,
+      token: null,
+      userData: null,
       view: true, //toggles between Character list and Games list; default is characters
       elements: [], //empty array to store element data, such as characters or games to list
     };
@@ -32,15 +35,34 @@ class Home extends Component {
     this.setState({view: !this.state.view});
   }
 
+  async componentDidMount() {
+    //get the token, if one exists
+    await AsyncStorage.getItem('session').then(session => {
+      let data = JSON.parse(session);
+      let idToken = data !== null ? data.auth.id_token : null;
+      let user = data !== null ? data.userData : null;
+
+      this.setState({ token: idToken, userData: user, isLoaded: true });
+    });
+  }
+
   render() {
-    return (
-      <View style={s.container}>
-        <MainNav view={this.state.view} switchView={this.switchView.bind(this)}/>
-        {binaryRender(this.state.view,
-          <Characters userData={this.props.userData} token={this.props.token}/>,
-          <Games token={this.props.token}/>)}
-      </View>
-    )
+    if (!this.state.isLoaded) {
+      return (
+        <View style={s.indicate}>
+          <ActivityIndicator />
+        </View>
+      )
+    } else {
+      return (
+        <View style={s.container}>
+          <MainNav view={this.state.view} switchView={this.switchView.bind(this)}/>
+          {binaryRender(this.state.view,
+            <Characters userData={this.state.userData} token={this.state.token}/>,
+            <Games userData={this.state.userData} token={this.state.token}/>)}
+        </View>
+      )
+    }
   }
 }
 
@@ -50,11 +72,14 @@ const s = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    // justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: 'hsl(215, 80%, 95%)',
   },
   comp: {
     marginTop: 20
+  },
+  indicate: {
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });

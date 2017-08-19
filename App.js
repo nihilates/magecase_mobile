@@ -23,9 +23,10 @@ class App extends Component {
     //get the token, if one exists
     await AsyncStorage.getItem('session').then(session => {
       let data = JSON.parse(session);
-      let idToken = data.auth.id_token;
+      let idToken = data !== null ? data.auth.id_token : null;
+      let user = data !== null ? data.userData : null;
 
-      this.setState({ hasData: idToken !== null, token: idToken, userData: data.userData, isLoaded: true });
+      this.setState({ hasData: idToken !== null, token: idToken, userData: user, isLoaded: true });
     });
   }
 

@@ -8,7 +8,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import axios from 'axios';
+import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
 
@@ -17,8 +17,12 @@ class Characters extends Component {
     super(props);
     this.state = {
       isLoaded: false,
-      characters: [],
+      characters: []
     };
+  }
+
+  navCharDetails(char) {
+    Actions.CharDetails({character: char});
   }
 
   componentDidMount() {
@@ -30,18 +34,26 @@ class Characters extends Component {
   }
 
   render() {
-    console.log(this.state)
-
     if (!this.state.isLoaded) {
       return (
-        <ActivityIndicator />
+        <View style={s.indicate}>
+          <ActivityIndicator />
+        </View>
       )
     } else {
       return (
         <View style={s.container}>
           <Text style={s.title}>Characters</Text>
           {this.state.characters.map((char, i) => {
-            return <Text key={i}>{char.char_name}</Text>
+            return (
+              <View key={i}>
+                <TouchableOpacity onPress={() => {
+                  this.navCharDetails(char);
+                }}>
+                  <Text style={s.textBtn}>{char.char_name}</Text>
+                </TouchableOpacity>
+              </View>
+            )
           })}
         </View>
       )
@@ -63,5 +75,18 @@ const s = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     margin: 10,
+  },
+  indicate: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    marginTop: 20,
+    backgroundColor: 'hsla(180, 80%, 100%, 0.5)',
+    width: '90%',
+    height: 300,
+  },
+  textBtn: {
+    fontWeight: 'bold',
+    padding: 5,
+    flexDirection: 'row',
   },
 });
