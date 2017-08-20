@@ -21,12 +21,21 @@ class Games extends Component {
     };
   }
 
-  componentDidMount() {
+  navGameDetails(game) {
+    Actions.GameDetails({game: game});
+  }
+
+  getGames() { //populates the component with game data
     axios.get(path+api.game.all+'?userId='+this.props.userData.id)
       .then(res => {
         let data = res.data;
         this.setState({games: data, isLoaded: true})
-      });
+      })
+      .catch(error => console.error(error));
+  }
+
+  componentDidMount() {
+    this.getGames();
   }
 
   render() {
@@ -41,7 +50,15 @@ class Games extends Component {
         <View style={s.container}>
           <Text style={s.title}>Games</Text>
           {this.state.games.map((game, i) => {
-            return <Text key={i}>{game.game_name}</Text>
+            return (
+              <View key={i}>
+                <TouchableOpacity onPress={() => {
+                  this.navGameDetails(game);
+                }}>
+                  <Text style={s.textBtn}>{game.game_name}</Text>
+                </TouchableOpacity>
+              </View>
+            )
           })}
         </View>
       )

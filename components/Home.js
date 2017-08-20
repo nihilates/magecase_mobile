@@ -11,13 +11,15 @@ import {
   View
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-import { binaryRender } from './_util.js';
+import { binaryRender, getToken } from './_util.js';
+import Modal from 'react-native-modal';
 //import api configurations
 import { path, api } from './_config.js';
 /*import custom components*/
 import MainNav from './MainNav.js';
 import Characters from './components_home/Characters.js';
 import Games from './components_home/Games.js';
+import ModalCreate from './components_home/ModalCreate.js';
 
 class Home extends Component {
   constructor(props) {
@@ -26,8 +28,8 @@ class Home extends Component {
       isLoaded: false,
       token: null,
       userData: null,
-      view: true, //toggles between Character list and Games list; default is characters
-      elements: [], //empty array to store element data, such as characters or games to list
+      view: this.props.view, //toggles between Character list and Games list; default is characters
+      showModal: false,
     };
   }
 
@@ -35,15 +37,16 @@ class Home extends Component {
     this.setState({view: !this.state.view});
   }
 
-  async componentDidMount() {
-    //get the token, if one exists
-    await AsyncStorage.getItem('session').then(session => {
-      let data = JSON.parse(session);
-      let idToken = data !== null ? data.auth.id_token : null;
-      let user = data !== null ? data.userData : null;
+  createNew() {
+    this.setState({showModal: true});
+  }
 
-      this.setState({ token: idToken, userData: user, isLoaded: true });
-    });
+  closeModal() {
+    this.setState({showModal: false});
+  }
+
+  componentDidMount() {
+    getToken(this.setState.bind(this));
   }
 
   render() {
@@ -56,10 +59,18 @@ class Home extends Component {
     } else {
       return (
         <View style={s.container}>
-          <MainNav view={this.state.view} switchView={this.switchView.bind(this)}/>
+          <MainNav view={this.state.view} switchView={this.switchView.bind(this)} createNew={this.createNew.bind(this)}/>
+
           {binaryRender(this.state.view,
-            <Characters userData={this.state.userData} token={this.state.token}/>,
-            <Games userData={this.state.userData} token={this.state.token}/>)}
+            <Characters userData={this.state.userData} token={this.state.token} />,
+            <Games userData={this.state.userData} token={this.state.token} />
+          )}
+
+          <Modal isVisible={this.state.showModal}>
+            <View>
+              <ModalCreate closeModal={this.closeModal.bind(this)} />
+            </View>
+          </Modal>
         </View>
       )
     }

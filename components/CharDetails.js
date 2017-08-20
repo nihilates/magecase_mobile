@@ -14,7 +14,7 @@ class CharDetails extends Component {
   }
 
   backHome() {
-    Actions.Home();
+    Actions.Home({view: true});
   }
 
   render() {

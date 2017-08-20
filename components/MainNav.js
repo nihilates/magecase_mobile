@@ -36,6 +36,12 @@ class MainNav extends Component {
         </View>
 
         <View>
+          <TouchableOpacity onPress={this.props.createNew}>
+            <Text style={s.textBtn}> Add </Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
           <TouchableOpacity onPress={this.userLogout.bind(this)}>
             <Text style={s.textBtn}> Log Out </Text>
           </TouchableOpacity>

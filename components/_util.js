@@ -1,4 +1,6 @@
 /*Helper Functions for use components*/
+import { AsyncStorage } from 'react-native'; //required for AsyncStorage token saving functions
+
 module.exports = { //returns one or the other component based on a condition check
   binaryRender: (condition, main, other) => { //takes a condition as the 1st parameter and two components as the 2nd and 3rd.
     return condition ? main : other; //if the input condition is true, render the main component. Otherwise, render the other component.
@@ -40,5 +42,24 @@ module.exports = { //returns one or the other component based on a condition che
     } else { //otherwise...
       return {invalid: false} //the password is NOT invalid
     }
+  },
+  //save token data to the device
+  saveToken: async (name, data) => {
+    try {
+      await AsyncStorage.setItem(name, JSON.stringify(data));
+    } catch (error) {
+      console.error('AsyncStorage error:', error.message);
+    }
+  },
+
+  getToken: async (callback) => {
+    //get the token, if one exists
+    await AsyncStorage.getItem('session').then(session => {
+      let data = JSON.parse(session);
+      let idToken = data !== null ? data.auth.id_token : null;
+      let user = data !== null ? data.userData : null;
+
+      callback({ token: idToken, userData: user, isLoaded: true });
+    });
   }
 };

@@ -14,13 +14,14 @@ class GameDetails extends Component {
   }
 
   backHome() {
-    Actions.Home();
+    Actions.Home({view: false});
   }
 
   render() {
     return (
       <View style={s.container}>
         <Text style={s.title}>Game Details</Text>
+        <Text>{JSON.stringify(this.props.game)}</Text>
         <TouchableOpacity onPress={this.backHome.bind(this)}>
             <Text style={s.textBtn}> Back </Text>
         </TouchableOpacity>

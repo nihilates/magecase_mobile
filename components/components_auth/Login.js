@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { saveToken } from '../_util.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
@@ -19,18 +20,8 @@ class Login extends Component {
     this.state = {username: '', password: ''};
   }
 
-  async saveItem(item, selectedValue) {
-    try {
-      await AsyncStorage.setItem(item, selectedValue);
-    } catch (error) {
-      console.error('AsyncStorage error: ' + error.message);
-    }
-  }
-
-  async userLogin() {
+  userLogin() {
     if (!this.state.username || !this.state.password) return;
-
-    // axios.get(path+api.user.login+'?identity='+this.state.username+'&password='+this.state.password)
     axios.get(path+api.user.login, {
       params: {
         identity: this.state.username,
@@ -39,7 +30,7 @@ class Login extends Component {
     })
     .then(res => {
       if (res.status === 200) {
-        this.saveItem('session', JSON.stringify(res.data))
+        saveToken('session', res.data);
         Actions.Home();
       } else if (res.status === 204) {
         Alert.alert('Incorrect username or password', 'Please try again.');

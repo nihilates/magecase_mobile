@@ -50,6 +50,7 @@ class App extends Component {
               component={Home}
               hideNavBar={true}
               initial={this.state.hasData}
+              view={true} //defaults the landing page to Character; Allows a psuedo memory of last visited page
               token={this.state.token}
               userData={this.state.userData}
               key='Home'

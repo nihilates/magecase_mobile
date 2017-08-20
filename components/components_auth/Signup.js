@@ -9,7 +9,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { chkUName, chkEmail, chkPwd } from '../_util.js';
+import { chkUName, chkEmail, chkPwd, saveToken } from '../_util.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
@@ -20,15 +20,7 @@ class Signup extends Component {
     this.state = {username: null, email: null, password: null, pwdConfirm: null};
   }
 
-  async saveItem(item, selectedValue) {
-    try {
-      await AsyncStorage.setItem(item, selectedValue);
-    } catch (error) {
-      console.error('AsyncStorage error: ' + error.message);
-    }
-  }
-
-  async userSignup() {
+  userSignup() {
     if (!this.state.username || !this.state.password || !this.state.email) {
       Alert.alert('Error', 'Please complete all forms!');
       return;
@@ -49,10 +41,10 @@ class Signup extends Component {
       })
       .then(res => {
         if (res.status === 200) {
-          this.saveItem('session', JSON.stringify(res.data))
+          saveToken('session', res.data)
           Actions.Home();
         } else if (res.status === 204) {
-          Alert.alert('An account already exists for that username.');
+          Alert.alert('That username already exists.');
         } else {
           Alert.alert('Something went wrong', 'Please restart the app.')
         }

@@ -21,16 +21,21 @@ class Characters extends Component {
     };
   }
 
-  navCharDetails(char) {
+  navCharDetails(char) { //navigates to character details page, passing the selected character data into the props of the CharDetails component
     Actions.CharDetails({character: char});
   }
 
-  componentDidMount() {
+  getChars() { //populates the component with character data
     axios.get(path+api.char.all+'?userId='+this.props.userData.id)
       .then(res => {
         let data = res.data;
         this.setState({characters: data, isLoaded: true})
-      });
+      })
+      .catch(error => console.error(error));
+  }
+
+  componentDidMount() {
+    this.getChars();
   }
 
   render() {
