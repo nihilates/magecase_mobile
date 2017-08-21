@@ -23,6 +23,9 @@ module.exports = {
     },
     currency: {
       systems: '/api/currencysys'
-    }
+    },
+    inventory: {
+      all: '/api/inventory/all'
+    },
   }
 }

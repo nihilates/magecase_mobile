@@ -148,10 +148,3 @@ const s = StyleSheet.create({
     justifyContent: 'center'
   }
 });
-
-/*
-          {binaryRender(this.state.view,
-            <Characters userData={this.state.userData} token={this.state.token} />,
-            <Games userData={this.state.userData} token={this.state.token} />
-          )}
-*/
