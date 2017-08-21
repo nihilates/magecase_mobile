@@ -26,12 +26,16 @@ class ModalCreate extends Component {
   }
 
   submitData() {
-    axios.post(path+api.char.create, {
+    let body = {
       userId: this.props.userData.id,
-      char_name: this.state.selectedName,
-      currencyId: this.state.selectedSystem
-    })
-    .then(res => console.log(res))
+      currencyId: this.state.selectedSystem,
+    };
+    body[(this.props.view ? 'char_name' : 'game_name')] = this.state.selectedName;
+    console.log('THE BODY IS:', body);
+    console.log('THE PATH IS:', path+(this.props.view ? api.char.create : api.game.create))
+
+    axios.post(path+(this.props.view ? api.char.create : api.game.create), body)
+    .then(res => this.props.updateList((this.props.view ? 'characters' : 'games'), res.data))
     .catch(error => console.error(error));
   }
 
@@ -53,7 +57,8 @@ class ModalCreate extends Component {
             value={this.state.selectedName}
           />
         </View>
-      <DropdownMenu
+
+        <DropdownMenu
           defaultValue="Select Currency System"
           options={this.props.currencySystems.map(system => {
             return system.system_name

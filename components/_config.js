@@ -18,7 +18,8 @@ module.exports = {
       create: '/api/chars/create'
     },
     game: {
-      all: '/api/games'
+      all: '/api/games',
+      create: '/api/games/create'
     },
     currency: {
       systems: '/api/currencysys'

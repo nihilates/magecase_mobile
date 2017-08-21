@@ -19,8 +19,6 @@ import { path, api } from './_config.js';
 /*import custom components*/
 import MainNav from './MainNav.js';
 import DisplayElements from './components_home/DisplayElements.js';
-// import Characters from './components_home/Characters.js';
-// import Games from './components_home/Games.js';
 import ModalCreate from './components_home/ModalCreate.js';
 
 class Home extends Component {
@@ -32,6 +30,8 @@ class Home extends Component {
       userData: null,
       view: this.props.view, //toggles between Character list and Games list; default is characters
       showModal: false,
+      characters: [],
+      games: [],
       currencySystems: [],
     };
   }
@@ -54,13 +54,43 @@ class Home extends Component {
       .catch(error => console.error(error));
   }
 
-  closeModal() { //method to close the current modal, sent to the ModalCreate component
-    this.setState({showModal: false});
-    getToken(this.setState.bind(this));
+  getChars() { //populates the component with character data
+    axios.get(path+api.char.all+'?userId='+this.state.userData.id)
+      .then(res => {
+        let data = res.data;
+        this.setState({characters: data});
+      })
+      .catch(error => console.error(error));
   }
 
-  componentWillMount() {
-    getToken(this.setState.bind(this));
+  getGames() { //populates the component with game data
+    axios.get(path+api.game.all+'?userId='+this.state.userData.id)
+      .then(res => {
+        let data = res.data;
+        this.setState({games: data})
+      })
+      .catch(error => console.error(error));
+  }
+
+  updateList(target, entry) {
+    let list = this.state[target].concat(entry);
+
+    if (target === 'characters') {
+      this.setState({characters: list});
+    } else if (target === 'games') {
+      this.setState({games: list});
+    }
+  }
+
+  closeModal() { //method to close the current modal, sent to the ModalCreate component
+    this.setState({showModal: false});
+  }
+
+  componentDidMount() {
+    getToken(this.setState.bind(this)).then(() => {
+      this.getChars();
+      this.getGames();
+    })
   }
 
   render() {
@@ -75,18 +105,26 @@ class Home extends Component {
         <View style={s.container}>
           <MainNav view={this.state.view} switchView={this.switchView.bind(this)} createNew={this.createNew.bind(this)}/>
 
-          <DisplayElements view={this.state.view} userData={this.state.userData} token={this.state.token} />
+          <DisplayElements
+            characters={this.state.characters}
+            games={this.state.games}
+            view={this.state.view}
+            userData={this.state.userData}
+            token={this.state.token}
+          />
 
           <Modal isVisible={this.state.showModal}>
             <View>
               <ModalCreate
                 userData={this.state.userData}
                 currencySystems={this.state.currencySystems}
+                updateList={this.updateList.bind(this)}
                 view={this.state.view}
                 closeModal={this.closeModal.bind(this)}
               />
             </View>
           </Modal>
+
         </View>
       )
     }

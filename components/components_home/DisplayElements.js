@@ -16,37 +16,16 @@ class DisplayElements extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: false,
+      isLoaded: true,
       characters: [],
       games: [],
     };
   }
 
-  navigate(element) { //navigates to character details page, passing the selected character data into the props of the CharDetails component
-    Actions.CharDetails({subject: element});
-  }
-
-  getChars() { //populates the component with character data
-    axios.get(path+api.char.all+'?userId='+this.props.userData.id)
-      .then(res => {
-        let data = res.data;
-        this.setState({characters: data, isLoaded: true});
-      })
-      .catch(error => console.error(error));
-  }
-
-  getGames() { //populates the component with game data
-    axios.get(path+api.game.all+'?userId='+this.props.userData.id)
-      .then(res => {
-        let data = res.data;
-        this.setState({games: data, isLoaded: true})
-      })
-      .catch(error => console.error(error));
-  }
-
-  componentDidMount() {
-    this.getChars();
-    this.getGames();
+  //navigates to proper details page, passing the selected element's data into the props of the Details component
+  //if props.view is "true" then we are managing Character data. Otherwise, we are managing Game data
+  navigate(element) {
+    (this.props.view ? Actions.CharDetails : Actions.GameDetails)({subject: element})
   }
 
   render() {
@@ -57,11 +36,10 @@ class DisplayElements extends Component {
         </View>
       )
     } else {
-      console.log(this.state)
       return (
         <View style={s.container}>
           <Text style={s.title}>{this.props.view ? "Characters" : "Games"}</Text>
-          {(this.props.view ? this.state.characters : this.state.games).map((element, i) => {
+          {(this.props.view ? this.props.characters : this.props.games).map((element, i) => {
             return (
               <View key={i}>
                 <TouchableOpacity onPress={() => {
