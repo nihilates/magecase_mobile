@@ -14,7 +14,8 @@ module.exports = {
       subType: '/api/items/subtype'
     },
     char: {
-      all: '/api/chars'
+      all: '/api/chars',
+      create: '/api/chars/create'
     },
     game: {
       all: '/api/games'

@@ -12,17 +12,27 @@ import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
 
-class Games extends Component {
+class DisplayElements extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoaded: false,
+      characters: [],
       games: [],
     };
   }
 
-  navGameDetails(game) {
-    Actions.GameDetails({game: game});
+  navigate(element) { //navigates to character details page, passing the selected character data into the props of the CharDetails component
+    Actions.CharDetails({subject: element});
+  }
+
+  getChars() { //populates the component with character data
+    axios.get(path+api.char.all+'?userId='+this.props.userData.id)
+      .then(res => {
+        let data = res.data;
+        this.setState({characters: data, isLoaded: true});
+      })
+      .catch(error => console.error(error));
   }
 
   getGames() { //populates the component with game data
@@ -35,6 +45,7 @@ class Games extends Component {
   }
 
   componentDidMount() {
+    this.getChars();
     this.getGames();
   }
 
@@ -46,16 +57,17 @@ class Games extends Component {
         </View>
       )
     } else {
+      console.log(this.state)
       return (
         <View style={s.container}>
-          <Text style={s.title}>Games</Text>
-          {this.state.games.map((game, i) => {
+          <Text style={s.title}>{this.props.view ? "Characters" : "Games"}</Text>
+          {(this.props.view ? this.state.characters : this.state.games).map((element, i) => {
             return (
               <View key={i}>
                 <TouchableOpacity onPress={() => {
-                  this.navGameDetails(game);
+                  this.navigate(element);
                 }}>
-                  <Text style={s.textBtn}>{game.game_name}</Text>
+                  <Text style={s.textBtn}>{this.props.view ? element.char_name : element.game_name}</Text>
                 </TouchableOpacity>
               </View>
             )
@@ -66,7 +78,7 @@ class Games extends Component {
   }
 }
 
-export default Games;
+export default DisplayElements;
 
 const s = StyleSheet.create({
   container: {

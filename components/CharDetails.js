@@ -21,7 +21,7 @@ class CharDetails extends Component {
     return (
       <View style={s.container}>
         <Text style={s.title}>Character Details</Text>
-        <Text>{JSON.stringify(this.props.character)}</Text>
+        <Text>{JSON.stringify(this.props.subject)}</Text>
         <TouchableOpacity onPress={this.backHome.bind(this)}>
           <Text style={s.textBtn}> Back </Text>
         </TouchableOpacity>

@@ -18,8 +18,9 @@ import Modal from 'react-native-modal';
 import { path, api } from './_config.js';
 /*import custom components*/
 import MainNav from './MainNav.js';
-import Characters from './components_home/Characters.js';
-import Games from './components_home/Games.js';
+import DisplayElements from './components_home/DisplayElements.js';
+// import Characters from './components_home/Characters.js';
+// import Games from './components_home/Games.js';
 import ModalCreate from './components_home/ModalCreate.js';
 
 class Home extends Component {
@@ -44,18 +45,18 @@ class Home extends Component {
     this.setState({showModal: true});
   }
 
-  closeModal() { //method to close the current modal, sent to the ModalCreate component
-    this.setState({showModal: false});
-  }
-
   getSystems() {
     axios.get(path+api.currency.systems+'?userId='+this.state.userData.id)
       .then(res => {
         let data = res.data;
-        console.log(this.props.userData)
         this.setState({currencySystems: data});
       })
       .catch(error => console.error(error));
+  }
+
+  closeModal() { //method to close the current modal, sent to the ModalCreate component
+    this.setState({showModal: false});
+    getToken(this.setState.bind(this));
   }
 
   componentWillMount() {
@@ -74,14 +75,16 @@ class Home extends Component {
         <View style={s.container}>
           <MainNav view={this.state.view} switchView={this.switchView.bind(this)} createNew={this.createNew.bind(this)}/>
 
-          {binaryRender(this.state.view,
-            <Characters userData={this.state.userData} token={this.state.token} />,
-            <Games userData={this.state.userData} token={this.state.token} />
-          )}
+          <DisplayElements view={this.state.view} userData={this.state.userData} token={this.state.token} />
 
           <Modal isVisible={this.state.showModal}>
             <View>
-              <ModalCreate userData={this.props.userData} currencySystems={this.state.currencySystems} view={this.state.view} closeModal={this.closeModal.bind(this)} />
+              <ModalCreate
+                userData={this.state.userData}
+                currencySystems={this.state.currencySystems}
+                view={this.state.view}
+                closeModal={this.closeModal.bind(this)}
+              />
             </View>
           </Modal>
         </View>
@@ -107,3 +110,10 @@ const s = StyleSheet.create({
     justifyContent: 'center'
   }
 });
+
+/*
+          {binaryRender(this.state.view,
+            <Characters userData={this.state.userData} token={this.state.token} />,
+            <Games userData={this.state.userData} token={this.state.token} />
+          )}
+*/

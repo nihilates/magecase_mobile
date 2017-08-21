@@ -21,7 +21,7 @@ class GameDetails extends Component {
     return (
       <View style={s.container}>
         <Text style={s.title}>Game Details</Text>
-        <Text>{JSON.stringify(this.props.game)}</Text>
+        <Text>{JSON.stringify(this.props.subject)}</Text>
         <TouchableOpacity onPress={this.backHome.bind(this)}>
             <Text style={s.textBtn}> Back </Text>
         </TouchableOpacity>
