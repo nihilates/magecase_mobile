@@ -18,6 +18,9 @@ module.exports = {
     },
     game: {
       all: '/api/games'
+    },
+    currency: {
+      systems: '/api/currencysys'
     }
   }
 }

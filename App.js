@@ -22,11 +22,7 @@ class App extends Component {
   async componentDidMount() {
     //get the token, if one exists
     await AsyncStorage.getItem('session').then(session => {
-      let data = JSON.parse(session);
-      let idToken = data !== null ? data.auth.id_token : null;
-      let user = data !== null ? data.userData : null;
-
-      this.setState({ hasData: idToken !== null, token: idToken, userData: user, isLoaded: true });
+      this.setState({ hasData: session !== null, isLoaded: true });
     });
   }
 
@@ -52,14 +48,12 @@ class App extends Component {
               initial={this.state.hasData}
               view={true} //defaults the landing page to Character; Allows a psuedo memory of last visited page
               token={this.state.token}
-              userData={this.state.userData}
               key='Home'
               title='Home Page'
             />
             <Scene
               component={CharDetails}
               hideNavBar={true}
-              token={this.state.token}
               key='CharDetails'
               title='Character Details'
             />
@@ -67,7 +61,6 @@ class App extends Component {
               component={GameDetails}
               hideNavBar={true}
               token={this.state.token}
-              userData={this.state.userData}
               key='GameDetails'
               title='Game Details'
             />
@@ -75,7 +68,6 @@ class App extends Component {
               component={Items}
               hideNavBar={true}
               token={this.state.token}
-              userData={this.state.userData}
               key='Items'
               title='Items'
             />

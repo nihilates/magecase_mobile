@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
 import { binaryRender, getToken } from './_util.js';
+import axios from 'axios'; //axios for AJAX calls
 import Modal from 'react-native-modal';
 //import api configurations
 import { path, api } from './_config.js';
@@ -30,6 +31,7 @@ class Home extends Component {
       userData: null,
       view: this.props.view, //toggles between Character list and Games list; default is characters
       showModal: false,
+      currencySystems: [],
     };
   }
 
@@ -37,15 +39,26 @@ class Home extends Component {
     this.setState({view: !this.state.view});
   }
 
-  createNew() {
+  createNew() { //method to open the CreateNew modal, sent to the MainNav component
+    this.getSystems();
     this.setState({showModal: true});
   }
 
-  closeModal() {
+  closeModal() { //method to close the current modal, sent to the ModalCreate component
     this.setState({showModal: false});
   }
 
-  componentDidMount() {
+  getSystems() {
+    axios.get(path+api.currency.systems+'?userId='+this.state.userData.id)
+      .then(res => {
+        let data = res.data;
+        console.log(this.props.userData)
+        this.setState({currencySystems: data});
+      })
+      .catch(error => console.error(error));
+  }
+
+  componentWillMount() {
     getToken(this.setState.bind(this));
   }
 
@@ -68,7 +81,7 @@ class Home extends Component {
 
           <Modal isVisible={this.state.showModal}>
             <View>
-              <ModalCreate closeModal={this.closeModal.bind(this)} />
+              <ModalCreate userData={this.props.userData} currencySystems={this.state.currencySystems} view={this.state.view} closeModal={this.closeModal.bind(this)} />
             </View>
           </Modal>
         </View>

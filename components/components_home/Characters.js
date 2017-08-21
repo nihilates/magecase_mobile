@@ -29,7 +29,7 @@ class Characters extends Component {
     axios.get(path+api.char.all+'?userId='+this.props.userData.id)
       .then(res => {
         let data = res.data;
-        this.setState({characters: data, isLoaded: true})
+        this.setState({characters: data, isLoaded: true});
       })
       .catch(error => console.error(error));
   }
