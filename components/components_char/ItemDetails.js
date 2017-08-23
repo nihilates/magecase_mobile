@@ -25,7 +25,7 @@ class ItemDetails extends Component {
   render() {
     return (
       <View style={s.container}>
-        <Text>{this.props.selection.item.item_name} x{this.props.selection.count}</Text>
+        <Text>{JSON.stringify(this.props.selection)}</Text>
         <SimpleBtn callback={this.props.closeModal} buttonText="Close"/>
       </View>
     )

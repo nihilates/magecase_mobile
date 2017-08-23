@@ -18,18 +18,20 @@ import { path, api } from './_config.js';
 import MainNav from './MainNav.js';
 import CharInventory from './components_char/CharInventory.js';
 import ItemDetails from './components_char/ItemDetails.js';
+import ItemCount from './components_char/ItemCount.js';
 
 class CharDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoaded: true,
-      showModal: false,
+      showItemDetails: false,
+      showItemCount: false,
       items: [],
       assets: [],
       bank: [],
       wallet: [],
-      selection: 0,
+      selection: null, //the index of a items/assets/banks/wallet to send to the modal's display
     };
   }
 
@@ -50,13 +52,26 @@ class CharDetails extends Component {
     Actions.Home({view: true});
   }
 
-  setSelection(index) {
-    this.setState({showModal: true});
-    this.setState({selection: index});
+  updateCount(item) {
+    axios.put(path+api.inventory.update, {
+      charId: this.props.subject.id,
+      id: item.id,
+      count: item.count
+    })
+    .then(() => this.getInventory())
+    .catch(error => console.error(error));
+  }
+
+  setSelection(index, modal) {
+    if (modal==='details') {
+      this.setState({showItemDetails: true, selection: index});
+    } else if (modal==='count') {
+      this.setState({showItemCount: true, selection: index})
+    }
   }
 
   closeModal() {
-    this.setState({showModal: false});
+    this.setState({showItemDetails: false, showItemCount: false});
   }
 
   componentDidMount() {
@@ -74,11 +89,25 @@ class CharDetails extends Component {
           setSelection={this.setSelection.bind(this)}
         />
 
-        <Modal isVisible={this.state.showModal}>
+        <Modal isVisible={this.state.showItemDetails}>
           <View>
-            <ItemDetails closeModal={this.closeModal.bind(this)} selection={this.state.items[this.state.selection]}/>
+            <ItemDetails
+              closeModal={this.closeModal.bind(this)}
+              selection={this.state.items[this.state.selection]}
+            />
           </View>
         </Modal>
+
+        <Modal isVisible={this.state.showItemCount}>
+          <View>
+            <ItemCount
+              closeModal={this.closeModal.bind(this)}
+              selection={this.state.items[this.state.selection]}
+              updateCount={this.updateCount.bind(this)}
+            />
+          </View>
+        </Modal>
+
       </View>
     )
   }

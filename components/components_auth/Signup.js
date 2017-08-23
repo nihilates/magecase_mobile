@@ -24,7 +24,7 @@ class Signup extends Component {
   userSignup() {
     if (!chkForm( //if the form fields do not comply with the required information and format...
       { username: this.state.username,
-        email: this.state.email.toLowerCase(),
+        email: this.state.email,
         password: this.state.password,
         pwdConfirm: this.state.pwdConfirm,
       })) { return; //end the registration attempt and send a specific error message (see _util.js for details)

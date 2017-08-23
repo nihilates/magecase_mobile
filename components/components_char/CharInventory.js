@@ -12,6 +12,8 @@ import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
+//import custom components
+import ItemEntry from './ItemEntry.js';
 
 class CharInventory extends Component {
   constructor(props) {
@@ -24,7 +26,14 @@ class CharInventory extends Component {
       <View style={s.container}>
         <Text style={s.title}>Character Inventory</Text>
         {this.props.items.map((entry, i) => {
-          return <SimpleBtn key={i} callback={() => this.props.setSelection(i)} buttonText={entry.item.item_name} />
+          return (
+            <ItemEntry key={i} index={i}
+              charId={this.props.character.id}
+              setSelection={this.props.setSelection}
+              updateCount={this.props.updateCount}
+              entry={entry}
+            />
+          )
         })}
       </View>
     )
