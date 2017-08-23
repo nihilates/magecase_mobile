@@ -10,7 +10,7 @@ import {
   Text,
   View
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux';
 import { binaryRender, getToken } from './_util.js';
 import axios from 'axios'; //axios for AJAX calls
 import Modal from 'react-native-modal';
@@ -46,7 +46,11 @@ class Home extends Component {
   }
 
   getSystems() {
-    axios.get(path+api.currency.systems+'?userId='+this.state.userData.id)
+    axios.get(path+api.currency.systems, {
+      params: {
+        userId: this.state.userData.id
+      }
+    })
       .then(res => {
         let data = res.data;
         this.setState({currencySystems: data});
@@ -103,7 +107,15 @@ class Home extends Component {
     } else {
       return (
         <View style={s.container}>
-          <MainNav view={this.state.view} switchView={this.switchView.bind(this)} createNew={this.createNew.bind(this)}/>
+          <MainNav
+            view={this.state.view}
+            controls={[
+                {callback: this.switchView.bind(this), text: (this.state.view ? 'Games' : 'Characters')},
+                {callback: this.createNew.bind(this), text: 'Add'}
+              ]}
+            switchView={this.switchView.bind(this)}
+            createNew={this.createNew.bind(this)}
+          />
 
           <DisplayElements
             characters={this.state.characters}
@@ -139,9 +151,6 @@ const s = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     backgroundColor: 'hsl(215, 80%, 95%)',
-  },
-  comp: {
-    marginTop: 20
   },
   indicate: {
     alignItems: 'center',

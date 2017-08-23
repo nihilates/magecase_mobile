@@ -1,7 +1,6 @@
 //Landing Page after authentication.
 import React, { Component } from 'react';
 import {
-  Alert,
   AsyncStorage,
   TextInput,
   TouchableOpacity,
@@ -10,6 +9,8 @@ import {
   View
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
+/*Import Custom Components*/
+import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 
 class MainNav extends Component {
   constructor(props) {
@@ -29,22 +30,14 @@ class MainNav extends Component {
   render() {
     return (
       <View style={s.container}>
-        <View>
-          <TouchableOpacity onPress={this.props.switchView}>
-            <Text style={s.textBtn}>{this.props.view ? 'Games' : 'Characters'}</Text>
-          </TouchableOpacity>
+        <View style={s.controls}>
+          {this.props.controls.map((control, i) => {
+            return <SimpleBtn key={i} callback={control.callback} buttonText={control.text} />
+          })}
         </View>
 
         <View>
-          <TouchableOpacity onPress={this.props.createNew}>
-            <Text style={s.textBtn}> Add </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View>
-          <TouchableOpacity onPress={this.userLogout.bind(this)}>
-            <Text style={s.textBtn}> Log Out </Text>
-          </TouchableOpacity>
+          <SimpleBtn callback={this.userLogout.bind(this)} buttonText="Log Out"/>
         </View>
       </View>
     )
@@ -67,4 +60,7 @@ const s = StyleSheet.create({
     fontWeight: 'bold',
     padding: 10,
   },
+  controls: {
+    flexDirection: 'row'
+  }
 });

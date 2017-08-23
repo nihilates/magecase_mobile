@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
@@ -15,28 +16,18 @@ import { path, api } from '../_config.js';
 class CharInventory extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLoaded: true,
-    };
+    this.state = {};
   }
 
   render() {
-    if (!this.state.isLoaded) {
-      return (
-        <View style={s.indicate}>
-          <ActivityIndicator />
-        </View>
-      )
-    } else {
-      return (
-        <View style={s.container}>
-          <Text style={s.title}>Character Inventory</Text>
-          {this.props.items.map((entry, i) => {
-            return <Text key={i}>{entry.item.item_name}</Text>
-          })}
-        </View>
-      )
-    }
+    return (
+      <View style={s.container}>
+        <Text style={s.title}>Character Inventory</Text>
+        {this.props.items.map((entry, i) => {
+          return <SimpleBtn key={i} callback={() => this.props.setSelection(i)} buttonText={entry.item.item_name} />
+        })}
+      </View>
+    )
   }
 }
 

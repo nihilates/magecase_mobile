@@ -9,6 +9,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import { saveToken } from '../_util.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
@@ -72,10 +73,7 @@ class Login extends Component {
           />
         </View>
 
-        <TouchableOpacity onPress={this.userLogin.bind(this)}>
-            <Text style={s.textBtn}> Log In </Text>
-        </TouchableOpacity>
-
+        <SimpleBtn callback={this.userLogin.bind(this)} buttonText="Login"/>
       </View>
     )
   }

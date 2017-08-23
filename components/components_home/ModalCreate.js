@@ -8,8 +8,10 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import DropdownMenu from '.././components_misc/DropdownMenu.js';
 import axios from 'axios'; //axios for AJAX calls
+import { chkForm } from '../_util.js';
 //import api configurations
 import { path, api } from '../_config.js';
 
@@ -18,8 +20,8 @@ class ModalCreate extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedName: null, //name for character or game
-      selectedSystem: null, //currency system to be associated with character or game
+      selectedName: '', //name for character or game
+      selectedSystem: '', //currency system to be associated with character or game
     };
 
     this.submitData = this.submitData.bind(this);
@@ -31,12 +33,15 @@ class ModalCreate extends Component {
       currencyId: this.state.selectedSystem,
     };
     body[(this.props.view ? 'char_name' : 'game_name')] = this.state.selectedName;
-    console.log('THE BODY IS:', body);
-    console.log('THE PATH IS:', path+(this.props.view ? api.char.create : api.game.create))
+    if (!chkForm(body)) {
+      return;
+    } else {
+      axios.post(path+(this.props.view ? api.char.create : api.game.create), body)
+      .then(res => this.props.updateList((this.props.view ? 'characters' : 'games'), res.data))
+      .catch(error => console.error(error));
 
-    axios.post(path+(this.props.view ? api.char.create : api.game.create), body)
-    .then(res => this.props.updateList((this.props.view ? 'characters' : 'games'), res.data))
-    .catch(error => console.error(error));
+      this.props.closeModal();
+    }
   }
 
   render() {
@@ -68,16 +73,8 @@ class ModalCreate extends Component {
           }}
         />
 
-        <TouchableOpacity onPress={() => {
-          this.submitData()
-          this.props.closeModal()
-        }}>
-            <Text style={s.textBtn}> Submit </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={this.props.closeModal}>
-            <Text style={s.textBtn}> Cancel </Text>
-        </TouchableOpacity>
+        <SimpleBtn callback={this.submitData} buttonText="Submit"/>
+        <SimpleBtn callback={this.props.closeModal} buttonText="Cancel" />
       </View>
     )
   }

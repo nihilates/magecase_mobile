@@ -9,7 +9,8 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { chkUName, chkEmail, chkPwd, saveToken } from '../_util.js';
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
+import { saveToken, chkForm } from '../_util.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
@@ -21,19 +22,13 @@ class Signup extends Component {
   }
 
   userSignup() {
-    if (!this.state.username || !this.state.password || !this.state.email) {
-      Alert.alert('Error', 'Please complete all forms!');
-      return;
-    } else if (chkPwd(this.state.password, this.state.pwdConfirm).invalid) {
-      Alert.alert('Error', chkPwd(this.state.password, this.state.pwdConfirm).message);
-      return;
-    } else if (chkEmail(this.state.email).invalid){
-      Alert.alert('Error', 'Please enter a valid email address');
-      return;
-    } else if (chkUName(this.state.username).invalid) {
-      Alert.alert('Error', chkUName(this.state.username).message);
-      return;
-    } else {
+    if (!chkForm( //if the form fields do not comply with the required information and format...
+      { username: this.state.username,
+        email: this.state.email.toLowerCase(),
+        password: this.state.password,
+        pwdConfirm: this.state.pwdConfirm,
+      })) { return; //end the registration attempt and send a specific error message (see _util.js for details)
+    } else { //Otherwise, send the database the login information
       axios.post(path+api.user.signup, {
         user_name: this.state.username,
         user_email: this.state.email.toLowerCase(),
@@ -106,9 +101,8 @@ class Signup extends Component {
             value={this.state.passwordConf}
           />
         </View>
-        <TouchableOpacity onPress={this.userSignup.bind(this)}>
-            <Text style={s.textBtn}> Submit </Text>
-        </TouchableOpacity>
+
+        <SimpleBtn callback={this.userSignup.bind(this)} buttonText="Submit"/>
       </View>
     )
   }

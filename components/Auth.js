@@ -11,6 +11,7 @@ import {
 import { Actions } from 'react-native-router-flux';
 import { binaryRender } from './_util.js';
 /*import custom components*/
+import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 import Login from './components_auth/Login.js';
 import Signup from './components_auth/Signup.js';
 
@@ -30,9 +31,7 @@ class Auth extends Component {
     return (
       <View style={s.container}>
         {binaryRender(this.state.hasAccount, <Login />, <Signup />)}
-        <TouchableOpacity onPress={this.accessMethod.bind(this)}>
-            <Text style={s.textBtn}>{this.state.hasAccount ? 'Create Account' : 'Login Account'}</Text>
-        </TouchableOpacity>
+        <SimpleBtn callback={this.accessMethod.bind(this)} buttonText={this.state.hasAccount ? 'Create Account' : 'Login Account'} />
       </View>
     )
   }
@@ -47,9 +46,4 @@ const s = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'hsl(215, 80%, 95%)',
   },
-  textBtn: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-    flexDirection: 'row',
-  }
 });

@@ -1,48 +1,28 @@
 /*Helper Functions for use components*/
-import { AsyncStorage } from 'react-native'; //required for AsyncStorage token saving functions
+import { AsyncStorage, Alert } from 'react-native'; //required for AsyncStorage token saving functions
 
 module.exports = { //returns one or the other component based on a condition check
   binaryRender: (condition, main, other) => { //takes a condition as the 1st parameter and two components as the 2nd and 3rd.
     return condition ? main : other; //if the input condition is true, render the main component. Otherwise, render the other component.
   },
-  //Methods for testing account signup input validity
-  chkUName: username => { //takes a submitted username string
-    //declare a regex to check that a username contains only letters and/or numbers
-    const regex = /^[a-z\-0-9]+$/i;
-    //check length then regex, in that order. Return object with bool and error message for dynamic Alerts in the app
-    if (username.length<6) { //if the username is less than 6 characters long...
-      return {invalid: true, message: 'Usernames must be at least 6 characters long'}; //username is invalid
-    } else if (!regex.test(username)) { //if the username contains invalid characters...
-      return {invalid: true, message: 'Usernames can only contains letters and/or numbers'}; //username is invalid
-    } else { //otherwise, the username is NOT invalid
-      return {invalid: false};
-    }
-  },
 
-  chkEmail: email => { //takes a submitted email string
-    //declare a regular expression to test email syntax
-    const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    if (!regex.test(email) ) { //if the submitted email is not in the format of a typical email...
-      return {invalid: true, message: 'Please enter a valid email address'}; //email is invalid
-    } else { //otherwise...
-      return {invalid: false}; //the email is NOT invalid
+  //Method to verify that text input fields have all be filled with correct formatting
+  chkForm: form => {
+    //check that all fields have been filled
+    for (key in form) {
+      if (form[key].length===null || form[key].length<1) {
+        console.log(key+':'+form[key])
+        Alert.alert('Please fill out all fields');
+        return false;
+      }
     };
+
+    if (form.username && !chkUName(form.username)) return false; //if the username meets all requirements...
+    if (form.email && !chkEmail(form.email)) return false; //if the email address is valid...
+    if (form.password && !chkPwd(form.password, form.pwdConfirm)) return false; //if the passwords match and are valid...
+    return true; //if all pass, return true
   },
 
-  chkPwd: (password, pwdAgain) => { //takes a submitted password and confirmed password, both as strings
-    //declare a regex to check for invalid characters in a password
-    const regex = /[<\>\[\]\{\}\(\)\|]/g;
-    //check the validity of the "password", its length, and then if it matches the "pwdAgain"
-    if (regex.test(password)) { //if the password contains invalid characters...
-      return {invalid: true, message: 'Passwords cannot contain the following characters: <>[]{}()|'} //password is invalid
-    } else if (password.length<8) { //if the password is less than 8 characters in length...
-      return {invalid: true, message: 'Passwords must be at least 8 characters long.'} //password is invalid
-    } else if (password !== pwdAgain) { //if the password and the pwdAgain do not match...
-      return {invalid: true, message: 'The passwords need to match.'} //password is invalid
-    } else { //otherwise...
-      return {invalid: false} //the password is NOT invalid
-    }
-  },
   //save token data to the device
   saveToken: async (name, data) => {
     try {
@@ -52,7 +32,7 @@ module.exports = { //returns one or the other component based on a condition che
     }
   },
 
-  getToken: async (callback) => {
+  getToken: async callback => {
     //get the token, if one exists
     await AsyncStorage.getItem('session').then(session => {
       let data = JSON.parse(session);
@@ -61,5 +41,48 @@ module.exports = { //returns one or the other component based on a condition che
 
       callback({ token: idToken, userData: user, isLoaded: true });
     });
+  },
+};
+
+//Internal Helper Functions
+const chkUName = username => { //takes a submitted username string
+  let regex = /^[a-z\-0-9]+$/i;
+  if (username.length<6) {
+    Alert.alert('Usernames must be 6 or more characters');
+    return false;
   }
+  if (!regex.test(username)) {
+    Alert.alert('Username contains invalid characters');
+    return false;
+  }
+  return true;
+};
+
+const chkEmail = email => { //takes a submitted email string
+  //declare a regular expression to test email syntax
+  let regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (!regex.test(email) ) { //if the submitted email is not in the format of a typical email...
+    Alert.alert('Please enter a valid email address');
+    return false;
+  };
+  return true;
+};
+
+const chkPwd = (password, pwdAgain) => { //takes a submitted password and confirmed password, both as strings
+  //declare a regex to check for invalid characters in a password
+  let regex = /[<\>\[\]\{\}\(\)\|]/g;
+  //check the validity of the "password", its length, and then if it matches the "pwdAgain"
+  if (regex.test(password)) { //if the password contains invalid characters...
+    Alert.alert('Password contains invalid characters')
+    return false;
+  };
+  if (password.length<8) { //if the password is less than 8 characters in length...
+    Alert.alert('Passwords must be 8 or more characters')
+    return false;
+  };
+  if (password !== pwdAgain) { //if the password and the pwdAgain do not match...
+    Alert.alert('The passwords don\'t match')
+    return false; //password is invalid
+  };
+  return true;
 };

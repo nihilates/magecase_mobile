@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
@@ -15,11 +16,7 @@ import { path, api } from '../_config.js';
 class DisplayElements extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLoaded: true,
-      characters: [],
-      games: [],
-    };
+    this.state = {};
   }
 
   //navigates to proper details page, passing the selected element's data into the props of the Details component
@@ -29,30 +26,14 @@ class DisplayElements extends Component {
   }
 
   render() {
-    if (!this.state.isLoaded) {
-      return (
-        <View style={s.indicate}>
-          <ActivityIndicator />
-        </View>
-      )
-    } else {
-      return (
-        <View style={s.container}>
-          <Text style={s.title}>{this.props.view ? "Characters" : "Games"}</Text>
-          {(this.props.view ? this.props.characters : this.props.games).map((element, i) => {
-            return (
-              <View key={i}>
-                <TouchableOpacity onPress={() => {
-                  this.navigate(element);
-                }}>
-                  <Text style={s.textBtn}>{this.props.view ? element.char_name : element.game_name}</Text>
-                </TouchableOpacity>
-              </View>
-            )
-          })}
-        </View>
-      )
-    }
+    return (
+      <View style={s.container}>
+        <Text style={s.title}>{this.props.view ? "Characters" : "Games"}</Text>
+        {(this.props.view ? this.props.characters : this.props.games).map((element, i) => {
+          return <SimpleBtn key={i} callback={() => this.navigate(element)} buttonText={this.props.view ? element.char_name : element.game_name} />
+        })}
+      </View>
+    )
   }
 }
 
