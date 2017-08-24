@@ -26,7 +26,8 @@ module.exports = {
     },
     inventory: {
       all: '/api/inventory/all',
-      update: '/api/inventory/update'
+      update: '/api/inventory/update',
+      remove: '/api/inventory/remove',
     },
   }
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import {
-  Picker,
+  Alert,
   TextInput,
   TouchableOpacity,
   StyleSheet,
@@ -24,7 +24,26 @@ class ItemCount extends Component {
   }
 
   changeValue(num) {
-    this.setState({value: this.state.value+num});
+    let newVal = this.state.value+num;
+    if (newVal>=0) this.setState({value: newVal});
+  }
+
+  saveChange() {
+    this.props.updateCount({id: this.props.selection.id, count: this.state.value});
+    this.props.closeModal();
+  }
+
+  confirmDelete(entry) {
+    Alert.alert(
+      'Delete Item?',
+      '',
+      [
+        {text: 'Okay', onPress: () => {
+          this.props.removeEntry(entry);
+          this.props.closeModal();
+        }},
+        {text: 'Cancel', onPress: () => {} }
+      ]);
   }
 
   render() {
@@ -49,14 +68,11 @@ class ItemCount extends Component {
         </View>
 
         <SimpleBtn
-          callback={() => {
-            this.props.updateCount({id: this.props.selection.id, count: this.state.value});
-            this.props.closeModal();
-          }}
+          callback={() => {(this.state.value<=0) ? this.confirmDelete(this.props.selection.id) : this.saveChange() }}
           buttonText="Save"
         />
-
-        <SimpleBtn callback={this.props.closeModal} buttonText="Cancel"/>
+        <SimpleBtn callback={() => this.confirmDelete(this.props.selection.id)} buttonText="Delete" />
+        <SimpleBtn callback={this.props.closeModal} buttonText="Cancel" />
       </View>
     )
   }
@@ -78,7 +94,7 @@ const s = StyleSheet.create({
   },
   input: {
     textAlign: 'center',
-    height: 25,
+    height: 50,
     width: 60,
   },
 });

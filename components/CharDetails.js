@@ -16,22 +16,18 @@ import Modal from 'react-native-modal';
 import { path, api } from './_config.js';
 //Import Custom Components
 import MainNav from './MainNav.js';
+import AddItem from './components_char/AddItem.js';
 import CharInventory from './components_char/CharInventory.js';
-import ItemDetails from './components_char/ItemDetails.js';
-import ItemCount from './components_char/ItemCount.js';
 
 class CharDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: true,
       showItemDetails: false,
       showItemCount: false,
+      showAddItem: false,
       items: [],
-      assets: [],
-      bank: [],
-      wallet: [],
-      selection: null, //the index of a items/assets/banks/wallet to send to the modal's display
+      selection: null
     };
   }
 
@@ -48,8 +44,20 @@ class CharDetails extends Component {
       .catch(error => console.error(error));
   }
 
-  backHome() {
-    Actions.Home({view: true});
+  setSelection(index, modal) {
+    if (modal==='details') {
+      this.setState({showItemDetails: true, selection: index});
+    } else if (modal==='count') {
+      this.setState({showItemCount: true, selection: index})
+    }
+  }
+
+  showAddItem() {
+    this.setState({showAddItem: true})
+  }
+
+  closeModal() {
+    this.setState({showItemDetails: false, showItemCount: false, showAddItem: false});
   }
 
   updateCount(item) {
@@ -62,16 +70,30 @@ class CharDetails extends Component {
     .catch(error => console.error(error));
   }
 
-  setSelection(index, modal) {
-    if (modal==='details') {
-      this.setState({showItemDetails: true, selection: index});
-    } else if (modal==='count') {
-      this.setState({showItemCount: true, selection: index})
-    }
+  removeEntry(inv_id) {
+    axios.delete(path+api.inventory.remove, {
+      data: {
+        charId: this.props.subject.id,
+        id: inv_id
+      }
+    })
+    .then(() => this.getInventory())
+    .catch(error => console.error(error));
   }
 
-  closeModal() {
-    this.setState({showItemDetails: false, showItemCount: false});
+  addItem(item, count) {
+    axios.post(path+api.inventory.remove, {
+      charId: this.props.subject.id,
+      itemId: item,
+      count: count
+    })
+    .then(() => this.getInventory())
+    // .then(data => console.log(data))
+    .catch(error => console.error(error));
+  }
+
+  backHome() {
+    Actions.Home({view: true});
   }
 
   componentDidMount() {
@@ -81,29 +103,32 @@ class CharDetails extends Component {
   render() {
     return (
       <View style={s.container}>
-        <MainNav controls={[{callback: this.backHome.bind(this), text: 'Back'}]} />
-        <Text style={s.title}>{this.props.subject.char_name}</Text>
-        <CharInventory
-          character={this.props.subject}
-          items={this.state.items}
-          setSelection={this.setSelection.bind(this)}
+        <MainNav
+          controls={[
+            {callback: this.backHome.bind(this), text: 'Back'},
+            {callback: this.showAddItem.bind(this), text: 'Add'}
+          ]}
         />
 
-        <Modal isVisible={this.state.showItemDetails}>
-          <View>
-            <ItemDetails
-              closeModal={this.closeModal.bind(this)}
-              selection={this.state.items[this.state.selection]}
-            />
-          </View>
-        </Modal>
+        <Text style={s.title}>{this.props.subject.char_name}</Text>
 
-        <Modal isVisible={this.state.showItemCount}>
+        <CharInventory
+          character={this.props.subject}
+          showItemDetails={this.state.showItemDetails}
+          showItemCount={this.state.showItemCount}
+          closeModal={this.closeModal.bind(this)}
+          updateCount={this.updateCount.bind(this)}
+          removeEntry={this.removeEntry.bind(this)}
+          items={this.state.items}
+          setSelection={this.setSelection.bind(this)}
+          selection={this.state.selection}
+        />
+
+        <Modal isVisible={this.state.showAddItem}>
           <View>
-            <ItemCount
+            <AddItem
+              addItem={this.addItem.bind(this)}
               closeModal={this.closeModal.bind(this)}
-              selection={this.state.items[this.state.selection]}
-              updateCount={this.updateCount.bind(this)}
             />
           </View>
         </Modal>
