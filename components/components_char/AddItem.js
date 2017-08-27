@@ -22,6 +22,19 @@ class AddItem extends Component {
     this.state = {};
   }
 
+  getItems() { //populates the component with item data
+    axios.get(path+api.item.all, {
+      params: {
+        charId: this.props.subject.id
+      }
+    })
+      .then(res => {
+        let data = res.data;
+        this.setState({items: data});
+      })
+      .catch(error => console.error(error));
+  }
+
   render() {
     return (
       <View style={s.container}>
