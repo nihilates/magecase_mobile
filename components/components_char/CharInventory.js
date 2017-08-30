@@ -1,6 +1,7 @@
 //Display component of characters belonging to a logged in user
 import React, { Component } from 'react';
 import {
+  ScrollView,
   ActivityIndicator,
   TouchableOpacity,
   StyleSheet,
@@ -15,8 +16,8 @@ import axios from 'axios'; //axios for AJAX calls
 import { path, api } from '../_config.js';
 //import custom components
 import ItemEntry from './ItemEntry.js';
-import ItemDetails from './ItemDetails.js';
-import ItemCount from './ItemCount.js';
+import InventoryDetails from './InventoryDetails.js';
+import SetCount from './SetCount.js';
 
 class CharInventory extends Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class CharInventory extends Component {
   render() {
     return (
       <View style={s.container}>
-        <View>
+        <ScrollView>
           <Text style={s.title}>Character Inventory</Text>
           {this.props.items.map((entry, i) => {
             return (
@@ -39,11 +40,11 @@ class CharInventory extends Component {
               />
             )
           })}
-        </View>
+        </ScrollView>
 
         <Modal isVisible={this.props.showItemDetails}>
           <View>
-            <ItemDetails
+            <InventoryDetails
               closeModal={this.props.closeModal}
               selection={this.props.items[this.props.selection]}
             />
@@ -52,11 +53,13 @@ class CharInventory extends Component {
 
         <Modal isVisible={this.props.showItemCount}>
           <View>
-            <ItemCount
-              closeModal={this.props.closeModal}
-              selection={this.props.items[this.props.selection]}
+            <SetCount
+              itemId={this.props.items[this.props.selection]}
+              count={this.props.items[this.props.selection]}
               updateCount={this.props.updateCount}
               removeEntry={this.props.removeEntry}
+              getInventory={this.props.getInventory}
+              closeModal={this.props.closeModal}
             />
           </View>
         </Modal>
@@ -94,19 +97,3 @@ const s = StyleSheet.create({
     flexDirection: 'row',
   },
 });
-
-/*
-        <View style={s.container}>
-          <Text style={s.title}>Character Inventory</Text>
-          {this.props.items.map((entry, i) => {
-            if (entry.count>0) return (
-              <ItemEntry key={i} index={i}
-                charId={this.props.character.id}
-                setSelection={this.props.setSelection}
-                updateCount={this.props.updateCount}
-                entry={entry}
-              />
-            )
-          })}
-        </View>
-*/

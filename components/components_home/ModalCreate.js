@@ -66,9 +66,9 @@ class ModalCreate extends Component {
         <DropdownMenu
           defaultValue="Select Currency System"
           options={this.props.currencySystems.map(system => {
-            return system.system_name
+            return system.system_name;
           })}
-          onSelect={(index) => {
+          onSelect={index => {
             this.setState({selectedSystem: this.props.currencySystems[index].id})
           }}
         />

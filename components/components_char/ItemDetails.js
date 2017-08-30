@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import {
+  Alert,
   Picker,
   TextInput,
   TouchableOpacity,
@@ -9,111 +10,142 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
+import Modal from 'react-native-modal';
 import DropdownMenu from '.././components_misc/DropdownMenu.js';
 import axios from 'axios'; //axios for AJAX calls
 import { binaryRender } from '../_util.js';
 //import api configurations
 import { path, api } from '../_config.js';
+//import custom components
+import SetCount from './SetCount.js';
 
 
-class ItemDetails extends Component {
+class InventoryDetails extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      showItemCount: false,
+    };
+  }
+
+  setCount() {
+    this.setState({showItemCount: true});
+  }
+
+  closeModal() {
+    this.setState({showItemCount: false});
   }
 
   render() {
     let entry = this.props.selection;
+
     return (
       <View style={s.container}>
         <View style={s.topRow}>
-          <View>
-            <Text>Icon</Text>
-          </View>
+          <View></View>
 
-          <View style={s.nameRow}>
-            <Text style={s.title}>{entry.item.item_name}</Text>
-            <Text style={s.subtext}>{entry.item.item_subtype.sub_name}</Text>
-          </View>
+          <Text style={[s.title, {marginLeft: 35}]}>{entry.item_name}</Text>
 
-          <View>
-            <Text>x{entry.count}</Text>
+          <View style={{flexDirection: 'row'}}>
+            <SimpleBtn callback={this.setCount.bind(this)} buttonText="Add" />
           </View>
         </View>
 
-        {binaryRender(entry.item.properties, (
+        {binaryRender(entry.properties, (
           <View style={s.infoRow}>
-            <Text style={s.label}>Details</Text>
-            <Text>{entry.item.properties}</Text>
+            <Text style={s.label}>Properties</Text>
+            <Text style={[s.element, s.body]}>{entry.properties}</Text>
           </View>
         ), null)}
 
-        {binaryRender(entry.item.description, (
+        {binaryRender(entry.rangeLo, (
+          <View style={s.infoRow}>
+            <Text style={s.label}>Range</Text>
+            <Text style={[s.element, s.body]}>{entry.rangeLo}/{entry.rangeHi} ft.</Text>
+          </View>
+        ), null)}
+
+        {binaryRender(entry.dice_count, (
+          <View style={s.infoRow}>
+            <Text style={s.label}>Attacks</Text>
+            <Text style={[s.element, s.body]}>
+              {entry.dice_count}d{entry.dice_type}
+              {entry.versatility ? " or "+entry.dice_count+"d"+entry.versatility : ""}
+              {entry.damageType ? " "+entry.damageType+" " : " "}
+              damage.
+            </Text>
+          </View>
+        ), null)}
+
+        {binaryRender(entry.value, (
           <View style={s.infoRow}>
             <Text style={s.label}>Description</Text>
-            <Text>{entry.item.description}</Text>
+            {binaryRender(entry.description,(
+              <Text style={s.element}>{entry.description}</Text>
+              ), null)}
+            <Text style={[s.element, s.body]}>Weight: {entry.weight}lbs, Value: {entry.value}</Text>
           </View>
         ), null)}
 
-        <View style={s.ctrlRow}>
-          <SimpleBtn callback={this.props.closeModal} buttonText="Close"/>
-        </View>
+        <Modal isVisible={this.state.showItemCount}>
+          <View style={s.container}>
+            <SetCount
+              topText="Add how many?"
+              itemId={entry.id}
+              minimum={1}
+              addEntry={this.props.addItem}
+              closeModal={this.closeModal.bind(this)}
+            />
+          </View>
+        </Modal>
+
       </View>
     )
   }
 }
 
-export default ItemDetails;
+export default InventoryDetails;
 
 const s = StyleSheet.create({
   container: {
-    backgroundColor: 'hsl(0, 0%, 80%)',
     flexDirection: 'column',
     justifyContent: 'center',
     alignContent: 'center',
     alignItems: 'center',
+    width: 300,
+    padding: 10,
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold'
-  },
-  subtext: {
-    fontStyle: 'italic'
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   label: {
     fontStyle: 'italic',
     fontWeight: 'bold',
     textAlign: 'center',
   },
+  addBtn: {
+    alignItems: 'center'
+  },
+  body: {
+    textAlign: 'center',
+  },
   topRow: {
-    width: '90%',
+    width: '95%',
     backgroundColor: 'hsl(180, 80%, 100%)',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
     alignItems: 'center',
-    marginTop: 10
-  },
-  nameRow: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
+    justifyContent: 'space-between'
   },
   infoRow: {
-    width: '90%',
+    width: '95%',
     backgroundColor: 'hsl(180, 80%, 100%)',
     flexDirection: 'column',
-    marginTop: 10,
   },
-  ctrlRow: {
-    width: '90%',
-    backgroundColor: 'hsl(180, 80%, 100%)',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    alignContent: 'center',
-    marginTop: 10,
-    marginBottom: 10,
+  element: {
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingBottom: 5,
   },
 });

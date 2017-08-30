@@ -9,9 +9,11 @@ module.exports = {
       signup: '/api/users/signup',
     },
     item: {
-      all: '/api/auth/items',
-      type: '/api/items/type',
-      subType: '/api/items/subtype'
+      all: '/api/auth/items/all',
+      types: '/api/items/types',
+      subtypes: '/api/items/subtypes',
+      oftype: '/api/items/oftype',
+      typeset: '/api/items/typeset'
     },
     char: {
       all: '/api/chars',
@@ -27,6 +29,7 @@ module.exports = {
     inventory: {
       all: '/api/inventory/all',
       update: '/api/inventory/update',
+      add: '/api/inventory/add',
       remove: '/api/inventory/remove',
     },
   }

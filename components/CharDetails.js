@@ -60,12 +60,14 @@ class CharDetails extends Component {
     this.setState({showItemDetails: false, showItemCount: false, showAddItem: false});
   }
 
-  updateCount(item) {
+  updateCount(itemId, count) {
+    console.log("ATTEMPT UPDATECOUNT")
     axios.put(path+api.inventory.update, {
       charId: this.props.subject.id,
-      id: item.id,
-      count: item.count
+      id: itemId,
+      count: count
     })
+    .then(data => console.log(data))
     .then(() => this.getInventory())
     .catch(error => console.error(error));
   }
@@ -81,14 +83,13 @@ class CharDetails extends Component {
     .catch(error => console.error(error));
   }
 
-  addItem(item, count) {
-    axios.post(path+api.inventory.remove, {
+  addItem(item, count=1) {
+    axios.post(path+api.inventory.add, {
       charId: this.props.subject.id,
       itemId: item,
       count: count
     })
     .then(() => this.getInventory())
-    // .then(data => console.log(data))
     .catch(error => console.error(error));
   }
 
@@ -122,6 +123,7 @@ class CharDetails extends Component {
           items={this.state.items}
           setSelection={this.setSelection.bind(this)}
           selection={this.state.selection}
+          getInventory={this.getInventory.bind(this)}
         />
 
         <Modal isVisible={this.state.showAddItem}>
