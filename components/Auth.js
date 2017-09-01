@@ -1,29 +1,25 @@
 import React, { Component } from 'react';
 import {
-  Alert,
-  AsyncStorage,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   Text,
-  View
+  View,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { binaryRender } from './_util.js';
+import { Actions } from 'react-native-router-flux'; //Actions from router-flux for changing pages between components
+import { binaryRender } from './_util.js'; //binaryRender helper function allows boolean rendering of 2 different components
 /*import custom components*/
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 import Login from './components_auth/Login.js';
 import Signup from './components_auth/Signup.js';
 
-class Auth extends Component {
+export default class Auth extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasAccount: true //toggle for "login" or "create account"
+      hasAccount: true //if hasAccount is "true", shows login page. Otherwise, it shows signup page
     };
   }
 
-  accessMethod() {
+  accessMethod() { //Method to pass into the props of the "Create Account"/"Login Account" button to allow toggle
     this.setState({hasAccount: !this.state.hasAccount});
   }
 
@@ -31,13 +27,14 @@ class Auth extends Component {
     return (
       <View style={s.container}>
         {binaryRender(this.state.hasAccount, <Login />, <Signup />)}
-        <SimpleBtn callback={this.accessMethod.bind(this)} buttonText={this.state.hasAccount ? 'Create Account' : 'Login Account'} />
+        <SimpleBtn
+          callback={this.accessMethod.bind(this)}
+          buttonText={this.state.hasAccount ? 'Create Account' : 'Login Account'} //Button text depends on hasAccount state
+        />
       </View>
     )
   }
 }
-
-export default Auth;
 
 const s = StyleSheet.create({
   container: {
