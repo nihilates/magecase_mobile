@@ -31,7 +31,17 @@ export default class Login extends Component {
     .then(res => {
       if (res.status === 200) { //if the response was 200...
         saveToken('session', res.data); //save the returned data (non-sensitive account info & JSON webtoken)
-        Actions.Home(); //transition page to the "Home" component
+        axios.get(path+'/api/users/fulldetails', {
+          params: {
+            identity: this.state.username,
+            password: this.state.password
+          }
+        })
+        .then(res => {
+          saveToken('accountData', res.data);
+        })
+        .then(() => Actions.Home())
+        // Actions.Home(); //transition page to the "Home" component
       } else if (res.status === 204) { //if the response was 204...
         Alert.alert('Incorrect username or password', 'Please try again.'); //send alert that either a username or password was incorrect
       } else {

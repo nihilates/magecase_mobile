@@ -8,7 +8,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { binaryRender, getToken } from './_util.js';
+import { binaryRender, getToken, getData } from './_util.js';
 import axios from 'axios'; //axios for AJAX calls
 import Modal from 'react-native-modal';
 //import api configurations
@@ -22,6 +22,7 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      account: [],
       isLoaded: false, //toggled when the app has loaded the necessary data to display
       token: null, //state to contain the user's JSON webtoken for quick authentication
       userData: null, //state to hold non-sensitive user account data
@@ -93,6 +94,8 @@ class Home extends Component {
         this.getChars(); //grab most recent character data
         this.getGames(); //grab most recent game data
       })
+      .then(() => getData('accountData', this.setState.bind(this)))
+      .catch(err => console.error(err));
   }
 
   render() {

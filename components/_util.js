@@ -24,7 +24,7 @@ module.exports = { //returns one or the other component based on a condition che
   },
 
   //save token data to the device
-  saveToken: async (name, data) => {
+  saveToken: async (name, data, callback) => {
     try {
       await AsyncStorage.setItem(name, JSON.stringify(data));
     } catch (error) {
@@ -39,7 +39,15 @@ module.exports = { //returns one or the other component based on a condition che
       let idToken = data !== null ? data.auth.id_token : null;
       let user = data !== null ? data.userData : null;
 
-      callback({ token: idToken, userData: user, isLoaded: true });
+      // callback({ token: idToken, userData: user, isLoaded: true });
+      callback({ token: idToken, userData: user});
+    });
+  },
+
+  getData: async (name, callback) => {
+    await AsyncStorage.getItem(name).then(account => {
+      let data = JSON.parse(account);
+      callback({account: data, isLoaded: true});
     });
   },
 };
