@@ -2,10 +2,7 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
-  Alert,
   AsyncStorage,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   Text,
   View
@@ -25,27 +22,27 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: false,
-      token: null,
-      userData: null,
+      isLoaded: false, //toggled when the app has loaded the necessary data to display
+      token: null, //state to contain the user's JSON webtoken for quick authentication
+      userData: null, //state to hold non-sensitive user account data
       view: this.props.view, //toggles between Character list and Games list; default is characters
-      showModal: false,
-      characters: [],
-      games: [],
-      currencySystems: [],
+      showModal: false, //toggle for modal views
+      characters: [], //array to contain character entries
+      games: [], //array to contain game entries
+      currencySystems: [], //array to hold a user's currency systems
     };
   }
 
-  switchView() {
+  switchView() { //toggles between Character and Game views
     this.setState({view: !this.state.view});
   }
 
   createNew() { //method to open the CreateNew modal, sent to the MainNav component
-    this.getSystems();
-    this.setState({showModal: true});
+    this.getSystems(); //load the most recent currency systems
+    this.setState({showModal: true}); //open the modal
   }
 
-  getSystems() {
+  getSystems() { //AJAX call to get currency systems
     axios.get(path+api.currency.systems, {
       params: {
         userId: this.state.userData.id
@@ -91,10 +88,11 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    getToken(this.setState.bind(this)).then(() => {
-      this.getChars();
-      this.getGames();
-    })
+    getToken(this.setState.bind(this)) //bind the setState function as a callback to the getToken helper
+      .then(() => {
+        this.getChars(); //grab most recent character data
+        this.getGames(); //grab most recent game data
+      })
   }
 
   render() {
@@ -109,7 +107,7 @@ class Home extends Component {
         <View style={s.container}>
           <MainNav
             view={this.state.view}
-            controls={[
+            controls={[ //MainNav's "controls" property takes an array of objects to render each button on the left side of the bar
                 {callback: this.switchView.bind(this), text: (this.state.view ? 'Games' : 'Characters')},
                 {callback: this.createNew.bind(this), text: 'Add'}
               ]}
@@ -117,7 +115,7 @@ class Home extends Component {
             createNew={this.createNew.bind(this)}
           />
 
-          <DisplayElements
+          <DisplayElements //Display for all characters or games, depending on which is currently in view
             characters={this.state.characters}
             games={this.state.games}
             view={this.state.view}
@@ -127,7 +125,7 @@ class Home extends Component {
 
           <Modal isVisible={this.state.showModal}>
             <View>
-              <ModalCreate
+              <ModalCreate //Modal for creating new Characters or Games
                 userData={this.state.userData}
                 currencySystems={this.state.currencySystems}
                 updateList={this.updateList.bind(this)}
