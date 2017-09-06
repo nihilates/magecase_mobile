@@ -5,13 +5,12 @@ import {
   Text,
   View
 } from 'react-native';
-import App from './App.js';
-//Redux Support
+import App from './App.js'; //main container component
+/*Redux Hookup*/
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, combineReduxers, compose } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { createLogger } from 'redux-logger';
-//IMPORT REDUCERS
 import reducer from './src/_reducers';
 
 const loggerMiddleware = createLogger({ predicate: (getState, action) => __DEV__ });

@@ -6,6 +6,6 @@ import * as types from '../_actions/types.js';
 //User account state and function for setting it
 export const account = createReducer({}, {
   [types.SET_ACCOUNT](state, action) {
-    return {name: 'biff meatwagon'};
+    return action.account;
   }
 });

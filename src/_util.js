@@ -51,14 +51,15 @@ module.exports = {
       let user = data !== null ? data.userData : null;
 
       // callback({ token: idToken, userData: user, isLoaded: true });
-      callback({ token: idToken, userData: user});
+      callback({ token: idToken, userData: user });
     });
   },
 
   getData: async (name, callback) => {
     await AsyncStorage.getItem(name).then(account => {
       let data = JSON.parse(account);
-      callback({account: data, isLoaded: true});
+      // callback({ account: data[0], isLoaded: true });
+      callback(data[0]);
     });
   },
 };

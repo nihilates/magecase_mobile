@@ -8,9 +8,8 @@ import {
   View
 } from 'react-native';
 import axios from 'axios'; //axios for AJAX calls
-import Modal from 'react-native-modal';
-import { binaryRender, getToken, getData } from './_util.js';
-import { Actions } from 'react-native-router-flux';
+import { binaryRender, getToken, getData } from './_util.js'; //utility functions
+import { Actions } from 'react-native-router-flux'; //router navigation
 /* Redux Hookup */
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -18,15 +17,21 @@ import { ActionCreators } from './_actions';
 /* import api configurations */
 import { path, api } from './_config.js';
 /* import custom components */
+import Modal from 'react-native-modal';
 import MainNav from './MainNav.js';
 import DisplayElements from './components_home/DisplayElements.js';
 import ModalCreate from './components_home/ModalCreate.js';
 
+/*Setting Component's Props from Redux Store*/
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {return {account: state.account} };
+
+/*Component Body*/
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      account: [],
+      account: {},
       isLoaded: true, //toggled when the app has loaded the necessary data to display
       token: null, //state to contain the user's JSON webtoken for quick authentication
       userData: null, //state to hold non-sensitive user account data
@@ -98,12 +103,12 @@ class Home extends Component {
         this.getChars(); //grab most recent character data
         this.getGames(); //grab most recent game data
       })
-      .then(() => getData('accountData', this.setState.bind(this)))
+      .then(() => getData('accountData', this.props.setAccount) )
       .catch(err => console.error(err));
   }
 
   render() {
-    console.log(this.props)
+    console.log('Props Include:', this.props)
     if (!this.state.isLoaded) {
       return (
         <View style={s.indicate}>
@@ -147,15 +152,7 @@ class Home extends Component {
       )
     }
   }
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(ActionCreators, dispatch);
-}
-
-function mapStateToProps(state) {
-  return {account: state.account};
-}
+};
 
 // export default Home;
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

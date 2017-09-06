@@ -1,11 +1,7 @@
 import React, {Component} from 'react';
 import {ActivityIndicator, AsyncStorage, TouchableHighlight, View, Text} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
-//Redux Support
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { ActionCreators } from './src/_actions';
-//IMPORT PAGES//
+/*Import Component Pages*/
 import Auth from './src/Auth.js';
 import Home from './src/Home.js';
 import CharDetails from './src/CharDetails.js';
@@ -30,7 +26,6 @@ class App extends Component {
   }
 
   render() {
-    console.log('The Value Is:', this.props)
     if (!this.state.isLoaded) {
       return (
         <ActivityIndicator />
@@ -75,13 +70,4 @@ class App extends Component {
   }
 }
 
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(ActionCreators, dispatch);
-}
-
-function mapStateToProps(state) {
-  return {account: state.account};
-}
-
-// export default App;
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default App;
