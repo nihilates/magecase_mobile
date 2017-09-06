@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage} from 'react-native';
+import {ActivityIndicator, AsyncStorage, TouchableHighlight, View, Text} from 'react-native';
 import {Router, Scene} from 'react-native-router-flux';
+//Redux Support
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './src/_actions';
 //IMPORT PAGES//
-import Auth from './components/Auth.js';
-import Home from './components/Home.js';
-import CharDetails from './components/CharDetails.js';
-import GameDetails from './components/GameDetails.js';
+import Auth from './src/Auth.js';
+import Home from './src/Home.js';
+import CharDetails from './src/CharDetails.js';
+import GameDetails from './src/GameDetails.js';
 
 class App extends Component {
   constructor() {
@@ -13,19 +17,20 @@ class App extends Component {
     this.state = {
       hasData: false,
       isLoaded: false,
-      token: null,
-      userData: null,
     };
   }
 
   async componentDidMount() {
     //get the token, if one exists
-    await AsyncStorage.getItem('session').then(session => {
-      this.setState({ hasData: session !== null, isLoaded: true });
-    });
+    await AsyncStorage.getItem('session')
+      .then(session => {
+        this.setState({ hasData: session !== null, isLoaded: true });
+      })
+      .catch(err => console.error(err));
   }
 
   render() {
+    console.log('The Value Is:', this.props)
     if (!this.state.isLoaded) {
       return (
         <ActivityIndicator />
@@ -70,4 +75,13 @@ class App extends Component {
   }
 }
 
-export default App;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+function mapStateToProps(state) {
+  return {account: state.account};
+}
+
+// export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);

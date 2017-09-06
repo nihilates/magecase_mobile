@@ -7,13 +7,17 @@ import {
   Text,
   View
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
-import { binaryRender, getToken, getData } from './_util.js';
 import axios from 'axios'; //axios for AJAX calls
 import Modal from 'react-native-modal';
-//import api configurations
+import { binaryRender, getToken, getData } from './_util.js';
+import { Actions } from 'react-native-router-flux';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './_actions';
+/* import api configurations */
 import { path, api } from './_config.js';
-/*import custom components*/
+/* import custom components */
 import MainNav from './MainNav.js';
 import DisplayElements from './components_home/DisplayElements.js';
 import ModalCreate from './components_home/ModalCreate.js';
@@ -23,7 +27,7 @@ class Home extends Component {
     super(props);
     this.state = {
       account: [],
-      isLoaded: false, //toggled when the app has loaded the necessary data to display
+      isLoaded: true, //toggled when the app has loaded the necessary data to display
       token: null, //state to contain the user's JSON webtoken for quick authentication
       userData: null, //state to hold non-sensitive user account data
       view: this.props.view, //toggles between Character list and Games list; default is characters
@@ -99,6 +103,7 @@ class Home extends Component {
   }
 
   render() {
+    console.log(this.props)
     if (!this.state.isLoaded) {
       return (
         <View style={s.indicate}>
@@ -144,7 +149,16 @@ class Home extends Component {
   }
 }
 
-export default Home;
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+function mapStateToProps(state) {
+  return {account: state.account};
+}
+
+// export default Home;
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const s = StyleSheet.create({
   container: {

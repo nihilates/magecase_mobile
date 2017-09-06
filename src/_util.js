@@ -1,7 +1,19 @@
 /*Helper Functions for use components*/
 import { AsyncStorage, Alert } from 'react-native'; //required for AsyncStorage token saving functions
 
-module.exports = { //returns one or the other component based on a condition check
+module.exports = {
+  //helper to create reducer functions
+  createReducer: (initialState, handlers) => {
+    return function reducer(state = initialState, action) {
+      if (handlers.hasOwnProperty(action.type)) {
+        return handlers[action.type](state, action)
+      } else {
+        return state
+      }
+    }
+  },
+
+  //returns one or the other component based on a condition check
   binaryRender: (condition, main, other) => { //takes a condition as the 1st parameter and two components as the 2nd and 3rd.
     return condition ? main : other; //if the input condition is true, render the main component. Otherwise, render the other component.
   },
@@ -11,7 +23,6 @@ module.exports = { //returns one or the other component based on a condition che
     //check that all fields have been filled
     for (key in form) {
       if (form[key].length===null || form[key].length<1) {
-        console.log(key+':'+form[key])
         Alert.alert('Please fill out all fields');
         return false;
       }

@@ -15,6 +15,7 @@ import Modal from 'react-native-modal';
 //Import api configuration
 import { path, api } from './_config.js';
 //Import Custom Components
+import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 import MainNav from './MainNav.js';
 import AddItem from './components_char/AddItem.js';
 import CharInventory from './components_char/CharInventory.js';
@@ -61,7 +62,6 @@ class CharDetails extends Component {
   }
 
   updateCount(itemId, count) {
-    console.log("ATTEMPT UPDATECOUNT")
     axios.put(path+api.inventory.update, {
       charId: this.props.subject.id,
       id: itemId,
@@ -109,6 +109,11 @@ class CharDetails extends Component {
             {callback: this.backHome.bind(this), text: 'Back'},
             {callback: this.showAddItem.bind(this), text: 'Add'}
           ]}
+        />
+
+        <SimpleBtn
+          callback={window.updateData}
+          buttonText="Tester"
         />
 
         <Text style={s.title}>{this.props.subject.char_name}</Text>
