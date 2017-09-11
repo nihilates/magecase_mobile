@@ -66,7 +66,7 @@ class Home extends Component {
   componentDidMount() {
     if (this.props.account_login && !this.props.account) {
       this.props.setAccount(this.props.account_login)
-      /* Maps All States On Initial Grab */
+      //TODO: Refactor this body of bindings into a helper function
       this.props.setAssets(this.props.account_login.asset_types);
       this.props.setChars(this.props.account_login.characters);
       this.props.setCurrency(this.props.account_login.currency_systems);

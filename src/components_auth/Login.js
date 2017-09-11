@@ -24,9 +24,7 @@ import { ActionCreators } from '../_actions';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
-const mapStateToProps = state => {return {
-  // account: state.account
-}};
+const mapStateToProps = state => {return {}};
 
 class Login extends Component {
   constructor(props) {

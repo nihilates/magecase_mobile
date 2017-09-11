@@ -81,7 +81,7 @@ class ModalCreate extends Component {
             return system.system_name;
           })}
           onSelect={index => {
-            this.setState({selectedSystem: this.props.account.currency_systems[index].id})
+            this.setState({selectedSystem: this.props.currencySystems[index].id})
           }}
         />
 

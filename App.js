@@ -44,7 +44,7 @@ class App extends Component {
       .then(() => loadFile('accountData', this.props.setAccount))
       .then(() => {
         if (this.props.account) { //if an account was found...
-          /* Maps All States On Initial Grab */
+          //TODO: Refactor this body of bindings into a helper function
           this.props.setAssets(this.props.account.asset_types);
           this.props.setChars(this.props.account.characters);
           this.props.setCurrency(this.props.account.currency_systems);

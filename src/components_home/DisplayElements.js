@@ -20,7 +20,13 @@ import { path, api } from '../_config.js';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
-const mapStateToProps = state => {return {account: state.account} };
+const mapStateToProps = state => {
+  return {
+    account: state.account,
+    characters: state.characters,
+    games: state.games,
+  }
+};
 
 /* Component Body */
 class DisplayElements extends Component {
@@ -39,7 +45,7 @@ class DisplayElements extends Component {
     return (
       <View style={s.container}>
         <Text style={s.title}>{this.props.view ? "Characters" : "Games"}</Text>
-        {(this.props.view ? this.props.account.characters : this.props.account.games).map((element, i) => {
+        {(this.props.view ? this.props.characters : this.props.games).map((element, i) => {
           return <SimpleBtn key={i} callback={() => this.navigate(element)} buttonText={this.props.view ? element.char_name : element.game_name} />
         })}
       </View>
@@ -47,7 +53,6 @@ class DisplayElements extends Component {
   }
 }
 
-// export default DisplayElements;
 export default connect(mapStateToProps, mapDispatchToProps)(DisplayElements);
 
 const s = StyleSheet.create({
