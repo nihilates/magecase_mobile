@@ -1,15 +1,16 @@
-//Landing Page after authentication.
+/* Top Navigator For All Pages */
 import React, { Component } from 'react';
 import {
-  AsyncStorage,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
-/*Import Custom Components*/
+import { Actions } from 'react-native-router-flux';
+/* Import Utility Functions */
+import { removeFile } from './_utility/manageStorage.js';
+/* Import Custom Components */
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 
 class MainNav extends Component {
@@ -18,14 +19,10 @@ class MainNav extends Component {
     this.state = {};
   }
 
-  async userLogout() {
-    try {
-      await AsyncStorage.removeItem('session');
-      Actions.Auth();
-    } catch (error) {
-      console.log('AsyncStorage error: ' + error.message);
-    }
-  }
+  userLogout() {
+  removeFile('accountData')
+  removeFile('session', Actions.Auth)
+  } //Method for deleting session and logging out
 
   render() {
     return (

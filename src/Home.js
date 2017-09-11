@@ -1,4 +1,4 @@
-//Landing Page after authentication.
+/* Landing Page After Authentication */
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
@@ -8,7 +8,8 @@ import {
   View
 } from 'react-native';
 import axios from 'axios'; //axios for AJAX calls
-import { binaryRender, getToken, getData } from './_util.js'; //utility functions
+import { loadFile } from './_utility/manageStorage.js';
+import { binaryRender, getToken, getData, getInitialData } from './_util.js'; //utility functions
 import { Actions } from 'react-native-router-flux'; //router navigation
 /* Redux Hookup */
 import { connect } from 'react-redux';
@@ -22,24 +23,31 @@ import MainNav from './MainNav.js';
 import DisplayElements from './components_home/DisplayElements.js';
 import ModalCreate from './components_home/ModalCreate.js';
 
-/*Setting Component's Props from Redux Store*/
+/* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
-const mapStateToProps = state => {return {account: state.account} };
+const mapStateToProps = state => {
+  return {
+    token: state.token,
+    account: state.account,
+    assets: state.assets,
+    characters: state.characters,
+    currencySystems: state.currencySystems,
+    games: state.games,
+    itemTypes: state.itemTypes,
+    items: state.items,
+    shopTypes: state.shopTypes,
+    shops: state.shops,
+  };
+};
 
-/*Component Body*/
+/* Component Body */
 class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      account: {},
-      isLoaded: true, //toggled when the app has loaded the necessary data to display
-      token: null, //state to contain the user's JSON webtoken for quick authentication
-      userData: null, //state to hold non-sensitive user account data
+      isLoaded: false, //toggled when the app has loaded the necessary data to display
       view: this.props.view, //toggles between Character list and Games list; default is characters
       showModal: false, //toggle for modal views
-      characters: [], //array to contain character entries
-      games: [], //array to contain game entries
-      currencySystems: [], //array to hold a user's currency systems
     };
   }
 
@@ -48,49 +56,7 @@ class Home extends Component {
   }
 
   createNew() { //method to open the CreateNew modal, sent to the MainNav component
-    this.getSystems(); //load the most recent currency systems
     this.setState({showModal: true}); //open the modal
-  }
-
-  getSystems() { //AJAX call to get currency systems
-    axios.get(path+api.currency.systems, {
-      params: {
-        userId: this.state.userData.id
-      }
-    })
-      .then(res => {
-        let data = res.data;
-        this.setState({currencySystems: data});
-      })
-      .catch(error => console.error(error));
-  }
-
-  getChars() { //populates the component with character data
-    axios.get(path+api.char.all+'?userId='+this.state.userData.id)
-      .then(res => {
-        let data = res.data;
-        this.setState({characters: data});
-      })
-      .catch(error => console.error(error));
-  }
-
-  getGames() { //populates the component with game data
-    axios.get(path+api.game.all+'?userId='+this.state.userData.id)
-      .then(res => {
-        let data = res.data;
-        this.setState({games: data})
-      })
-      .catch(error => console.error(error));
-  }
-
-  updateList(target, entry) {
-    let list = this.state[target].concat(entry);
-
-    if (target === 'characters') {
-      this.setState({characters: list});
-    } else if (target === 'games') {
-      this.setState({games: list});
-    }
   }
 
   closeModal() { //method to close the current modal, sent to the ModalCreate component
@@ -98,17 +64,26 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    getToken(this.setState.bind(this)) //bind the setState function as a callback to the getToken helper
-      .then(() => {
-        this.getChars(); //grab most recent character data
-        this.getGames(); //grab most recent game data
-      })
-      .then(() => getData('accountData', this.props.setAccount) )
-      .catch(err => console.error(err));
+    if (this.props.account_login && !this.props.account) {
+      this.props.setAccount(this.props.account_login)
+      /* Maps All States On Initial Grab */
+      this.props.setAssets(this.props.account_login.asset_types);
+      this.props.setChars(this.props.account_login.characters);
+      this.props.setCurrency(this.props.account_login.currency_systems);
+      this.props.setGames(this.props.account_login.games);
+      this.props.setItemTypes(this.props.account_login.item_types);
+      this.props.setItems(this.props.account_login.items);
+      this.props.setShopTypes(this.props.account_login.shop_types);
+      this.props.setShops(this.props.account_login.shops);
+
+      this.setState({isLoaded: true});
+    } else {
+      this.setState({isLoaded: this.props.account !== null});
+    }
   }
 
   render() {
-    console.log('Props Include:', this.props)
+    console.log(this.props)
     if (!this.state.isLoaded) {
       return (
         <View style={s.indicate}>
@@ -129,19 +104,12 @@ class Home extends Component {
           />
 
           <DisplayElements //Display for all characters or games, depending on which is currently in view
-            characters={this.state.characters}
-            games={this.state.games}
             view={this.state.view}
-            userData={this.state.userData}
-            token={this.state.token}
           />
 
           <Modal isVisible={this.state.showModal}>
             <View>
               <ModalCreate //Modal for creating new Characters or Games
-                userData={this.state.userData}
-                currencySystems={this.state.currencySystems}
-                updateList={this.updateList.bind(this)}
                 view={this.state.view}
                 closeModal={this.closeModal.bind(this)}
               />
@@ -154,7 +122,6 @@ class Home extends Component {
   }
 };
 
-// export default Home;
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const s = StyleSheet.create({

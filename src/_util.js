@@ -1,5 +1,7 @@
-/*Helper Functions for use components*/
+/* Helper Functions for use components */
 import { AsyncStorage, Alert } from 'react-native'; //required for AsyncStorage token saving functions
+import axios from 'axios'; //axios for AJAX calls
+import { path, api } from './_config.js';
 
 module.exports = {
   //helper to create reducer functions
@@ -50,18 +52,62 @@ module.exports = {
       let idToken = data !== null ? data.auth.id_token : null;
       let user = data !== null ? data.userData : null;
 
-      // callback({ token: idToken, userData: user, isLoaded: true });
       callback({ token: idToken, userData: user });
     });
   },
 
   getData: async (name, callback) => {
-    await AsyncStorage.getItem(name).then(account => {
-      let data = JSON.parse(account);
-      // callback({ account: data[0], isLoaded: true });
-      callback(data[0]);
+    await AsyncStorage.getItem(name).then(file => {
+      let data = JSON.parse(file);
+      callback(data);
     });
   },
+
+  getInitialData: async (account) => {
+    let accntData = {};
+
+    await axios.get(path+'/api/users/fulldetails', {
+      params: account
+    })
+    .then(resp => {accntData = resp.data[0]} )
+    .then(async () => { //add default currencies
+      await axios.get(path+'/api/default/currencies')
+        .then(resp => {
+          accntData.currency_systems = resp.data.concat(accntData.currency_systems);
+        })
+        .catch(err => console.error(err) );
+    })
+    .then(async () => { //add default items
+      await axios.get(path+'/api/default/items')
+        .then(resp => {
+          accntData.items = resp.data.concat(accntData.items);
+        })
+        .catch(err => console.error(err) );
+    })
+    .then(async () => { //add default item types
+      await axios.get(path+'/api/default/types')
+        .then(resp => {
+          accntData.item_types = resp.data;
+        })
+        .catch(err => console.error(err) );
+    })
+    .then(async () => { //add default shop types
+      await axios.get(path+'/api/default/shoptypes')
+        .then(resp => {
+          accntData.shop_types = resp.data.concat(accntData.shop_types);
+        })
+        .catch(err => console.error(err) );
+    })
+    .then(async () => { //store the result with AsyncStorage
+      try {
+        await AsyncStorage.setItem('accountData', JSON.stringify(accntData));
+      } catch (error) {
+      console.error('AsyncStorage error:', error.message);
+      }
+    })
+    .catch(err => console.error(err) );
+  },
+
 };
 
 //Internal Helper Functions

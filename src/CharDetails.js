@@ -19,6 +19,27 @@ import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 import MainNav from './MainNav.js';
 import AddItem from './components_char/AddItem.js';
 import CharInventory from './components_char/CharInventory.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './_actions';
+
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    token: state.token,
+    account: state.account,
+    assets: state.assets,
+    characters: state.characters,
+    currencySystems: state.currency,
+    games: state.games,
+    itemTypes: state.itemTypes,
+    items: state.items,
+    shopTypes: state.shopTypes,
+    shops: state.shops,
+  }
+};
 
 class CharDetails extends Component {
   constructor(props) {
@@ -111,11 +132,6 @@ class CharDetails extends Component {
           ]}
         />
 
-        <SimpleBtn
-          callback={window.updateData}
-          buttonText="Tester"
-        />
-
         <Text style={s.title}>{this.props.subject.char_name}</Text>
 
         <CharInventory
@@ -145,7 +161,7 @@ class CharDetails extends Component {
   }
 }
 
-export default CharDetails;
+export default connect(mapStateToProps, mapDispatchToProps)(CharDetails);
 
 
 const s = StyleSheet.create({
