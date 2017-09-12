@@ -12,17 +12,25 @@ import { Actions } from 'react-native-router-flux';
 import { removeFile } from './_utility/storageUtils.js';
 /* Import Custom Components */
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {return {}};
+
+/* Component Body */
 class MainNav extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
-  userLogout() {
-  removeFile('accountData')
-  removeFile('session', Actions.Auth)
-  } //Method for deleting session and logging out
+  userLogout() { //delete session token upon logout
+    removeFile('session', Actions.Auth);
+  }
 
   render() {
     return (
@@ -41,7 +49,7 @@ class MainNav extends Component {
   }
 }
 
-export default MainNav;
+export default connect(mapStateToProps, mapDispatchToProps)(MainNav);
 
 const s = StyleSheet.create({
   container: {

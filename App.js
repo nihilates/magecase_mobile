@@ -56,10 +56,12 @@ class App extends Component {
         }
       })
       .then(() => this.setState({ hasData: (this.props.token !== null && this.props.account !== null), isLoaded: true }) )
+      // .then(() => this.setState({ hasData: (this.props.token !== null), isLoaded: true }) )
       .catch(err => console.error(err));
   }
 
   render() {
+    console.log('APP HAS RENDERED')
     if (!this.state.isLoaded) {
       return (
         <ActivityIndicator />

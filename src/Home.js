@@ -83,7 +83,8 @@ class Home extends Component {
   }
 
   render() {
-    console.log(this.props.account)
+    console.log('HOME HAD RENDERED')
+    console.log('FROM HOME RENDER:', this.props)
     if (!this.state.isLoaded) {
       return (
         <View style={s.indicate}>

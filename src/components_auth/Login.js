@@ -1,4 +1,4 @@
-/* Login Controls */
+/* Component For Logging Into Existing Account */
 import React, { Component } from 'react';
 import {
   Alert,
@@ -8,13 +8,13 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-/* Import Utility Functions */
-import { saveFile, loadFile } from '../_utility/storageUtils.js';
+/* Helper Functions */
+import { saveFile } from '../_utility/storageUtils.js';
 import { buildAccount } from '../_data/buildAccount.js';
+/* Import API Config */
 import axios from 'axios'; //axios for AJAX calls
-//import api configurations
 import { path, api } from '../_config.js';
-//import custom components
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 /* Redux Hookup */
 import { connect } from 'react-redux';

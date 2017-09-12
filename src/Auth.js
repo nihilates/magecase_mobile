@@ -1,30 +1,49 @@
+/* Component to Display Login/Signup Options */
 import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
   View,
 } from 'react-native';
-import { Actions } from 'react-native-router-flux'; //Actions from router-flux for changing pages between components
 /* Helper Functions */
 import { binaryRender } from './_utility/generalUtils.js'; //binaryRender helper function allows boolean rendering of 2 different components
 /* Import Custom Components */
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 import Login from './components_auth/Login.js';
 import Signup from './components_auth/Signup.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './_actions';
 
-export default class Auth extends Component {
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    token: state.token,
+    account: state.account,
+  }
+};
+
+/* Component Body */
+class Auth extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hasAccount: true //if hasAccount is "true", shows login page. Otherwise, it shows signup page
+      hasAccount: true, //if hasAccount is "true", shows login page. Otherwise, it shows signup page
+      loggedOut: !this.props.account,
     };
   }
 
   accessMethod() { //Method to pass into the props of the "Create Account"/"Login Account" button to allow toggle
-    this.setState({hasAccount: !this.state.hasAccount});
+    this.setState({ hasAccount: !this.state.hasAccount });
+  }
+
+  componentWillMount() {
   }
 
   render() {
+    console.log('AUTH HAS RENDERED')
     return (
       <View style={s.container}>
         {binaryRender(this.state.hasAccount, <Login />, <Signup />)}
@@ -35,7 +54,9 @@ export default class Auth extends Component {
       </View>
     )
   }
-}
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
 
 const s = StyleSheet.create({
   container: {

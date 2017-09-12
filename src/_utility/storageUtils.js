@@ -32,10 +32,10 @@ const replaceFile = async (fileName, newData) => { //Lookup and replace an exist
   }
 };
 
-const removeFile = async (fileName, callback) => { //Remove a saved file from the device, and then execute a callback if one is supplied
+const removeFile = async (fileName, callback, props={}) => { //Remove a saved file from the device, and then execute a callback if one is supplied
   try {
     await AsyncStorage.removeItem(fileName); //Removes file
-    if (callback) callback(); //If callback exists, run it (in this app, it will mostly be a navigation callback)
+    if (callback) callback(props); //If callback exists, run it (in this app, it will mostly be a navigation callback)
   } catch (error) {
     console.error('AsyncStorage Error:', error.message);
   }
