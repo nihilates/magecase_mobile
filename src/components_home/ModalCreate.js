@@ -7,18 +7,18 @@ import {
   Text,
   View
 } from 'react-native';
+import { Actions } from 'react-native-router-flux'; //router controls
+/* Helper Functions */
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
+import DropdownMenu from '../components_misc/DropdownMenu.js';
+import axios from 'axios'; //axios for AJAX calls
+import { chkForm } from '../_utility/formUtils.js';
+//import api configurations
+import { path, api } from '../_config.js';
 /* Redux Hookup */
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../_actions';
-/* Helper Functions */
-import { Actions } from 'react-native-router-flux';
-import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
-import DropdownMenu from '.././components_misc/DropdownMenu.js';
-import axios from 'axios'; //axios for AJAX calls
-import { chkForm } from '../_util.js';
-//import api configurations
-import { path, api } from '../_config.js';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };

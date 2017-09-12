@@ -1,3 +1,4 @@
+/* Component to Display A Single Item Entry */
 import React, { Component } from 'react';
 import {
   TextInput,
@@ -6,25 +7,43 @@ import {
   Text,
   View
 } from 'react-native';
+/* Helper Functions */
+import { displayMatch } from '../_utility/dataUtils.js';
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
-import axios from 'axios'; //axios for AJAX calls
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
+
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    items: state.items,
+  }
+};
 
 
 class ItemEntry extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      entry: displayMatch(this.props.items, 'id', this.props.entry.itemId),
+    };
   }
 
   render() {
+    console.log('Item Entry:', this.props.entry)
+    console.log(this.state.entry.item_name)
     return (
       <View style={s.container}>
         <SimpleBtn
-          callback={() => this.props.setSelection(this.props.index, 'details')}
-          buttonText={this.props.entry.item.item_name}
+          callback={() => this.props.setSelection(this.props.entry, 'details')}
+          buttonText={this.state.entry.item_name}
         />
         <SimpleBtn
-          callback={() => this.props.setSelection(this.props.index, 'count')}
+          callback={() => this.props.setSelection(this.props.entry, 'count')}
           buttonText={"x"+this.props.entry.count}
         />
       </View>
@@ -32,7 +51,7 @@ class ItemEntry extends Component {
   }
 }
 
-export default ItemEntry;
+export default connect(mapStateToProps, mapDispatchToProps)(ItemEntry);
 
 const s = StyleSheet.create({
   container: {

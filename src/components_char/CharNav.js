@@ -1,4 +1,4 @@
-//Landing Page after authentication.
+/* Component Navigation Specific to CharDetails Component */
 import React, { Component } from 'react';
 import {
   AsyncStorage,
@@ -9,7 +9,7 @@ import {
   View
 } from 'react-native';
 import {Actions} from 'react-native-router-flux';
-/*Import Custom Components*/
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 
 class CharNav extends Component {

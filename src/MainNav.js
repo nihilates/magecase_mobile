@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 /* Import Utility Functions */
-import { removeFile } from './_utility/manageStorage.js';
+import { removeFile } from './_utility/storageUtils.js';
 /* Import Custom Components */
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 

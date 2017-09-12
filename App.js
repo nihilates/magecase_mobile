@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from './src/_actions';
 /* Utility Functions */
-import { loadFile } from './src/_utility/manageStorage.js';
+import { loadFile } from './src/_utility/storageUtils.js';
 /* Import Component Pages */
 import Auth from './src/Auth.js';
 import Home from './src/Home.js';
@@ -53,7 +53,6 @@ class App extends Component {
           this.props.setItems(this.props.account.items);
           this.props.setShopTypes(this.props.account.shop_types);
           this.props.setShops(this.props.account.shops);
-          console.log('DATA MAPPED IN APP')
         }
       })
       .then(() => this.setState({ hasData: (this.props.token !== null && this.props.account !== null), isLoaded: true }) )

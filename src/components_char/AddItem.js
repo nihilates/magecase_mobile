@@ -1,3 +1,4 @@
+/* Component Modal For Adding Items to Character Inventory */
 import React, { Component } from 'react';
 import {
   ScrollView,
@@ -8,14 +9,15 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+/* Helper Functions */
+import { displayOnly } from '../_utility/dataUtils.js';
+import { chkForm } from '../_utility/formUtils.js';
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
+import { path, api } from '../_config.js';
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import DropdownMenu from '.././components_misc/DropdownMenu.js';
-import axios from 'axios'; //axios for AJAX calls
-import { chkForm } from '../_util.js'; //TODO: Remove dependency on these
-import { displayOnly } from '../_utility/dataUtils.js';
-//import api configurations
-import { path, api } from '../_config.js';
-//import custom components
 import ItemDetails from './ItemDetails.js';
 /* Redux Hookup */
 import { connect } from 'react-redux';
@@ -26,19 +28,12 @@ import { ActionCreators } from '../_actions';
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
 const mapStateToProps = state => {
   return {
-    token: state.token,
-    account: state.account,
-    assets: state.assets,
-    characters: state.characters,
-    currencySystems: state.currency,
-    games: state.games,
     itemTypes: state.itemTypes,
     items: state.items,
-    shopTypes: state.shopTypes,
-    shops: state.shops,
   }
 };
 
+/* Body of Component */
 class AddItem extends Component {
   constructor(props) {
     super(props);
@@ -101,6 +96,7 @@ class AddItem extends Component {
   }
 }
 
+/* Wrap With Redux And Export */
 export default connect(mapStateToProps, mapDispatchToProps)(AddItem);
 
 const s = StyleSheet.create({

@@ -1,3 +1,4 @@
+/* Component to Display a Selected Character's Details */
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
@@ -10,9 +11,11 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import axios from 'axios'; //axios for AJAX calls
 import Modal from 'react-native-modal';
-//Import api configuration
+/* Helper Functions */
+import { displayMatch } from './_utility/dataUtils.js';
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
 import { path, api } from './_config.js';
 //Import Custom Components
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
@@ -28,19 +31,15 @@ import { ActionCreators } from './_actions';
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
 const mapStateToProps = state => {
   return {
-    token: state.token,
     account: state.account,
-    assets: state.assets,
-    characters: state.characters,
-    currencySystems: state.currency,
+    selectedChar: state.selectedChar,
+    selectedEntry: state.selectedEntry,
     games: state.games,
-    itemTypes: state.itemTypes,
     items: state.items,
-    shopTypes: state.shopTypes,
-    shops: state.shops,
   }
 };
 
+/* Component Body */
 class CharDetails extends Component {
   constructor(props) {
     super(props);
@@ -66,11 +65,13 @@ class CharDetails extends Component {
       .catch(error => console.error(error));
   }
 
-  setSelection(index, modal) {
+  setSelection(entry, modal) {
     if (modal==='details') {
-      this.setState({showItemDetails: true, selection: index});
+      this.props.selectEntry(entry);
+      this.setState({ showItemDetails: true })
     } else if (modal==='count') {
-      this.setState({showItemCount: true, selection: index})
+      this.props.selectEntry(entry);
+      this.setState({ showItemCount: true })
     }
   }
 
@@ -132,16 +133,16 @@ class CharDetails extends Component {
           ]}
         />
 
-        <Text style={s.title}>{this.props.subject.char_name}</Text>
+        <Text style={s.title}>{this.props.selectedChar.char_name}</Text>
 
         <CharInventory
-          character={this.props.subject}
+          character={this.props.selectedChar}
           showItemDetails={this.state.showItemDetails}
           showItemCount={this.state.showItemCount}
           closeModal={this.closeModal.bind(this)}
           updateCount={this.updateCount.bind(this)}
           removeEntry={this.removeEntry.bind(this)}
-          items={this.state.items}
+          items={this.props.selectedChar.inventories}
           setSelection={this.setSelection.bind(this)}
           selection={this.state.selection}
           getInventory={this.getInventory.bind(this)}

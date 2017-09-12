@@ -38,7 +38,13 @@ class DisplayElements extends Component {
   //navigates to proper details page, passing the selected element's data into the props of the Details component
   //if props.view is "true" then we are managing Character data. Otherwise, we are managing Game data
   navigate(element) {
-    (this.props.view ? Actions.CharDetails : Actions.GameDetails)({subject: element})
+    // (this.props.view ? Actions.CharDetails : Actions.GameDetails)({subject: element})
+    if (this.props.view) {
+      this.props.selectCharacter(element);
+      Actions.CharDetails({subject: element})
+    } else {
+      Actions.GameDetails({subject: element})
+    }
   }
 
   render() {

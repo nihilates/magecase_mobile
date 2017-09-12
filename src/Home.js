@@ -7,21 +7,21 @@ import {
   Text,
   View
 } from 'react-native';
-import axios from 'axios'; //axios for AJAX calls
-import { loadFile } from './_utility/manageStorage.js';
-import { binaryRender, getToken, getData, getInitialData } from './_util.js'; //utility functions
 import { Actions } from 'react-native-router-flux'; //router navigation
-/* Redux Hookup */
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { ActionCreators } from './_actions';
-/* import api configurations */
+import axios from 'axios'; //axios for AJAX calls
+/* Utility Functions */
+import { loadFile } from './_utility/storageUtils.js';
+/* Import API Config */
 import { path, api } from './_config.js';
-/* import custom components */
+/* Import Custom Components */
 import Modal from 'react-native-modal';
 import MainNav from './MainNav.js';
 import DisplayElements from './components_home/DisplayElements.js';
 import ModalCreate from './components_home/ModalCreate.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './_actions';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
@@ -83,7 +83,7 @@ class Home extends Component {
   }
 
   render() {
-    console.log(this.props)
+    console.log(this.props.account)
     if (!this.state.isLoaded) {
       return (
         <View style={s.indicate}>

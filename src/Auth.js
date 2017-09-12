@@ -5,8 +5,9 @@ import {
   View,
 } from 'react-native';
 import { Actions } from 'react-native-router-flux'; //Actions from router-flux for changing pages between components
-import { binaryRender } from './_util.js'; //binaryRender helper function allows boolean rendering of 2 different components
-/*import custom components*/
+/* Helper Functions */
+import { binaryRender } from './_utility/generalUtils.js'; //binaryRender helper function allows boolean rendering of 2 different components
+/* Import Custom Components */
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
 import Login from './components_auth/Login.js';
 import Signup from './components_auth/Signup.js';

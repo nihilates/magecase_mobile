@@ -8,7 +8,8 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { saveToken, chkForm } from '../_util.js';
+import { chkForm } from '../_utility/formUtils.js';
+import { saveFile } from '../_utility/storageUtils.js';
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
@@ -36,7 +37,7 @@ class Signup extends Component {
       })
       .then(res => {
         if (res.status === 200) { //if response is 200...
-          saveToken('session', res.data) //save non-sensitive user account information and JSON webtoken
+          saveFile('session', res.data) //save non-sensitive user account information and JSON webtoken
           Actions.Home(); //transition to the Home component page
         } else if (res.status === 204) { //if response is 204...
           Alert.alert('That username already exists.'); //a username must already exist

@@ -9,9 +9,8 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 /* Import Utility Functions */
-import { saveFile, loadFile } from '../_utility/manageStorage.js';
+import { saveFile, loadFile } from '../_utility/storageUtils.js';
 import { buildAccount } from '../_data/buildAccount.js';
-import { getInitialData } from '../_util.js'; //TODO: Remove dependency on these
 import axios from 'axios'; //axios for AJAX calls
 //import api configurations
 import { path, api } from '../_config.js';
@@ -60,7 +59,6 @@ class Login extends Component {
   }
 
   render() {
-    console.log('LOGIN STATES', this.state)
     return (
       <View style={s.container}>
         <Text style={s.title}>Sign In</Text>

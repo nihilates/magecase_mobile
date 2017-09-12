@@ -1,8 +1,9 @@
 import axios from 'axios'; //axios for AJAX calls
 import { path, api } from '../_config.js';
-import { replaceFile } from '../_utility/manageStorage.js';
+import { replaceFile } from '../_utility/storageUtils.js';
 
 module.exports = {
+
   buildAccount: async (account, callback) => {
     let accountData = {};
 
@@ -44,4 +45,5 @@ module.exports = {
     })
     .catch(err => console.error(err) );
   },
-}
+
+};

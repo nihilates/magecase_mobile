@@ -1,5 +1,6 @@
 import * as types from './types.js';
 
+/* Main Account Setup */
 export function setToken(token) {
   return {
     type: types.SET_TOKEN,
@@ -14,6 +15,8 @@ export function setAccount(account) {
   };
 };
 
+
+/* Minor Account Setup Pieces */
 export function setAssets(assets) {
   return {
     type: types.SET_ASSETS,

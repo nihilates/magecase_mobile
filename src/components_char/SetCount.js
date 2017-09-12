@@ -1,3 +1,4 @@
+/* Component to Control Quantity of Items */
 import React, { Component } from 'react';
 import {
   Alert,
@@ -8,21 +9,37 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+/* Helper Functions */
+import { displayMatch } from '../_utility/dataUtils.js';
+import { binaryRender } from '../_utility/generalUtils.js';
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
+import { path, api } from '../_config.js';
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import DropdownMenu from '.././components_misc/DropdownMenu.js';
-import { binaryRender } from '../_util.js';
-import axios from 'axios'; //axios for AJAX calls
-//import api configurations
-import { path, api } from '../_config.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    selectedEntry: state.selectedEntry,
+    items: state.items,
+  }
+};
 
+/* Component Body */
 class SetCount extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      itemId: (this.props.itemId.itemId ? this.props.itemId.itemId : this.props.itemId),
-      inventoryId: (this.props.itemId.id ? this.props.itemId.id : null),
-      count: (this.props.itemId.count !== undefined ? this.props.itemId.count : 1),
+      itemId: displayMatch(this.props.items, 'id', this.props.selectedEntry.itemId),
+      inventoryId: this.props.selectedEntry.id,
+      count: this.props.selectedEntry.count,
       minimum: this.props.minimum || 0,
       maximum: this.props.maximum || 9999,
     };
@@ -104,7 +121,7 @@ class SetCount extends Component {
   }
 }
 
-export default SetCount;
+export default connect(mapStateToProps, mapDispatchToProps)(SetCount);
 
 const s = StyleSheet.create({
   container: {
