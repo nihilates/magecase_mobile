@@ -46,8 +46,8 @@ class Login extends Component {
     .then(res => {
       if (res.status === 200) { //if the response was 200...
         saveFile('session', res.data); //Save the Webtoken that gets returned upon successful login
-        buildAccount({identity: this.state.username, password: this.state.password}, this.setAccount.bind(this)) //grab all initial account data, including defaults
-          .then(() => Actions.Home({account_login: this.state.account}) ) //then navigate to homepage
+        buildAccount({identity: this.state.username, password: this.state.password}, this.props.setAccount) //grab all initial account data, including defaults
+          .then(() => this.props.nav('Home') ) //Navigate to Home page
           .catch(err => console.error(err) );
       } else if (res.status === 204) { //if the response was 204...
         Alert.alert('Incorrect username or password', 'Please try again.'); //send alert that either a username or password was incorrect

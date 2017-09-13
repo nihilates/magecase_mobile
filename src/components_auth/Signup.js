@@ -34,10 +34,6 @@ class Signup extends Component {
     this.state = {username: '', email: '', password: '', pwdConfirm: ''};
   }
 
-  setAccount(data) {
-    this.setState({account: data});
-  }
-
   userSignup() { //method to process user inputs during signup process
     if (!chkForm( //if the form fields do not comply with the required information and format...
       { username: this.state.username,
@@ -54,8 +50,8 @@ class Signup extends Component {
       .then(res => {
         if (res.status === 200) { //if response is 200...
           saveFile('session', res.data) //save non-sensitive user account information and JSON webtoken
-          buildAccount({identity: this.state.username, password: this.state.password}, this.setAccount.bind(this) )
-            .then(() => Actions.Home({account_login: this.state.account})) //transition to the Home component page
+          buildAccount({identity: this.state.username, password: this.state.password}, this.props.setAccount)
+            .then(() => this.props.nav('Home') ) //transition to the Home component page
             .catch(err => console.error(err) );
         } else if (res.status === 204) { //if response is 204...
           Alert.alert('That username already exists.'); //a username must already exist

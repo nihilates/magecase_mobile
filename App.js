@@ -1,6 +1,8 @@
+/* Main App Container */
 import React, {Component} from 'react';
 import {ActivityIndicator, AsyncStorage, TouchableHighlight, View, Text} from 'react-native';
-import {Router, Scene} from 'react-native-router-flux';
+// import {Router, Scene} from 'react-native-router-flux';
+import { StackNavigator, addNavigationHelpers } from 'react-navigation';
 /* Redux Hookup */
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,95 +17,46 @@ import GameDetails from './src/GameDetails.js';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
-const mapStateToProps = state => {
-  return {
-    token: state.token,
-    account: state.account,
-    assets: state.assets,
-    characters: state.characters,
-    currencySystems: state.currency,
-    games: state.games,
-    itemTypes: state.itemTypes,
-    items: state.items,
-    shopTypes: state.shopTypes,
-    shops: state.shops,
-  }
-};
+const mapStateToProps = state => {return {
+  token: state.token,
+}};
 
+/* Component Body */
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      hasData: false,
-      isLoaded: false,
+      isLoaded: false
     };
   }
 
-  componentDidMount() { //TODO: Split the Account state into sub states based on their keys
-    loadFile('session', this.props.setToken)
-      .then(() => loadFile('accountData', this.props.setAccount))
+  componentDidMount() {
+    loadFile('session', this.props.setToken) //load the session token, if one exists. If not, it will return null and a Redux store will not be updated
       .then(() => {
-        if (this.props.account) { //if an account was found...
-          //TODO: Refactor this body of bindings into a helper function
-          this.props.setAssets(this.props.account.asset_types);
-          this.props.setChars(this.props.account.characters);
-          this.props.setCurrency(this.props.account.currency_systems);
-          this.props.setGames(this.props.account.games);
-          this.props.setItemTypes(this.props.account.item_types);
-          this.props.setItems(this.props.account.items);
-          this.props.setShopTypes(this.props.account.shop_types);
-          this.props.setShops(this.props.account.shops);
-        }
+        this.setState({ isLoaded: true });
       })
-      .then(() => this.setState({ hasData: (this.props.token !== null && this.props.account !== null), isLoaded: true }) )
-      // .then(() => this.setState({ hasData: (this.props.token !== null), isLoaded: true }) )
-      .catch(err => console.error(err));
   }
 
   render() {
-    console.log('APP HAS RENDERED')
+    /* Set Navigation */
+    const Navigation = StackNavigator(
+      {
+        Auth: { screen: Auth },
+        Home: { screen: Home },
+        CharDetails: { screen: CharDetails },
+        GameDetails: { screen: GameDetails },
+      },
+      {
+        initialRouteName: (this.props.token ? 'Home' : 'Auth'), //if a session token exists, start at "Home", otherwise start at "Auth"
+      },
+    );
+
     if (!this.state.isLoaded) {
-      return (
-        <ActivityIndicator />
-      )
+      return <ActivityIndicator style={{'flex': 1}} />
     } else {
-      return(
-        <Router>
-          <Scene key='root'>
-            <Scene
-              component={Auth}
-              hideNavBar={true}
-              initial={!this.state.hasData}
-              key='Auth'
-              title='Authentication'
-            />
-            <Scene
-              component={Home}
-              hideNavBar={true}
-              initial={this.state.hasData}
-              view={true} //defaults the landing page to Character; Allows a psuedo memory of last visited page
-              token={this.state.token}
-              key='Home'
-              title='Home Page'
-            />
-            <Scene
-              component={CharDetails}
-              hideNavBar={true}
-              key='CharDetails'
-              title='Character Details'
-            />
-            <Scene
-              component={GameDetails}
-              hideNavBar={true}
-              token={this.state.token}
-              key='GameDetails'
-              title='Game Details'
-            />
-          </Scene>
-        </Router>
-      )
+      return <Navigation />
     }
   }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

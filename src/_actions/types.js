@@ -1,3 +1,6 @@
+/* Routing */
+export const SET_PAGE = 'SET_PAGE';
+
 /* Main Account Setup */
 export const SET_TOKEN = 'SET_TOKEN';
 export const SET_ACCOUNT = 'SET_ACCOUNT';

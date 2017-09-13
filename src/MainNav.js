@@ -29,7 +29,7 @@ class MainNav extends Component {
   }
 
   userLogout() { //delete session token upon logout
-    removeFile('session', Actions.Auth);
+    removeFile('session', this.props.nav, 'Auth');
   }
 
   render() {

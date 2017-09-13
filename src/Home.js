@@ -42,11 +42,16 @@ const mapStateToProps = state => {
 
 /* Component Body */
 class Home extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
   constructor(props) {
     super(props);
+    const { navigate } = this.props.navigation;
     this.state = {
       isLoaded: false, //toggled when the app has loaded the necessary data to display
-      view: this.props.view, //toggles between Character list and Games list; default is characters
+      view: true, //toggles between Character list and Games list; default is characters
       showModal: false, //toggle for modal views
     };
   }
@@ -63,28 +68,40 @@ class Home extends Component {
     this.setState({showModal: false});
   }
 
-  componentDidMount() {
-    if (this.props.account_login && !this.props.account) {
-      this.props.setAccount(this.props.account_login)
-      //TODO: Refactor this body of bindings into a helper function
-      this.props.setAssets(this.props.account_login.asset_types);
-      this.props.setChars(this.props.account_login.characters);
-      this.props.setCurrency(this.props.account_login.currency_systems);
-      this.props.setGames(this.props.account_login.games);
-      this.props.setItemTypes(this.props.account_login.item_types);
-      this.props.setItems(this.props.account_login.items);
-      this.props.setShopTypes(this.props.account_login.shop_types);
-      this.props.setShops(this.props.account_login.shops);
+  splitAccount(account) {
+    this.props.setAssets(account.asset_types);
+    this.props.setChars(account.characters);
+    this.props.setCurrency(account.currency_systems);
+    this.props.setGames(account.games);
+    this.props.setItemTypes(account.item_types);
+    this.props.setItems(account.items);
+    this.props.setShopTypes(account.shop_types);
+    this.props.setShops(account.shops);
+  }
 
-      this.setState({isLoaded: true});
-    } else {
-      this.setState({isLoaded: this.props.account !== null});
+  componentDidMount() {
+    const { navigate } = this.props.navigation; //Sets Navigation Controls
+
+    if (!this.props.account) { //if an account does not already exist in the store... (i.e. A session token already exists)
+      loadFile('accountData', this.props.setAccount) //load the accountData file from AsyncStorage and set the loaded data with setAccount
+        .then(() => { //and then...
+          if (this.props.account) { //if the accountData loaded from AsyncStorage returned a real object...
+            this.splitAccount(this.props.account); //split the data from that object with the splitAccount method
+            this.setState({ isLoaded: true }); //set the "isLoaded" state to "true"; this will transition from the load wheel to the actual component
+          } else { //otherwise...
+            navigate('Auth'); //no accountData was found; something went wrong. Redirect user to "Auth" component
+          }
+        })
+    } else { //otherwise... (i.e. We navigated to the "Home" component from the "Auth" component, and accountData was set from there)
+      this.splitAccount(this.props.account); //split the data from the accountData object using the splitAccount method
+      this.setState({ isLoaded: true }); //set the "isLoaded" state to "true"; this will transition from the load wheel to the actual component
     }
   }
 
   render() {
-    console.log('HOME HAD RENDERED')
-    console.log('FROM HOME RENDER:', this.props)
+    console.log('HOME HAS RENDERED')
+    const { navigate } = this.props.navigation;
+
     if (!this.state.isLoaded) {
       return (
         <View style={s.indicate}>
@@ -96,6 +113,7 @@ class Home extends Component {
         <View style={s.container}>
           <MainNav
             view={this.state.view}
+            nav={navigate}
             controls={[ //MainNav's "controls" property takes an array of objects to render each button on the left side of the bar
                 {callback: this.switchView.bind(this), text: (this.state.view ? 'Games' : 'Characters')},
                 {callback: this.createNew.bind(this), text: 'Add'}

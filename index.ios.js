@@ -29,9 +29,10 @@ const store = configureStore({});
 
 export default class Magecase extends Component {
   render() {
+    console.log('TOPLEVEL', store)
     return (
       <Provider store={store}>
-        <App />
+        <App dispatch={store.dispatch}/>
       </Provider>
     );
   }

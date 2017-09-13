@@ -4,14 +4,14 @@ import { createReducer } from '../_utility/reduxHelpers.js';
 import * as types from '../_actions/types.js';
 
 //Token state and function for setting it
-export const token = createReducer({}, {
+export const token = createReducer(null, {
   [types.SET_TOKEN](state, action) {
     return action.token;
   }
 });
 
 //User account state and function for setting it
-export const account = createReducer({}, {
+export const account = createReducer(null, {
   [types.SET_ACCOUNT](state, action) {
     return action.account;
   }

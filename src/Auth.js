@@ -22,11 +22,16 @@ const mapStateToProps = state => {
   return {
     token: state.token,
     account: state.account,
+    page: state.page,
   }
 };
 
 /* Component Body */
 class Auth extends Component {
+  static navigationOptions = {
+    header: null,
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -39,14 +44,12 @@ class Auth extends Component {
     this.setState({ hasAccount: !this.state.hasAccount });
   }
 
-  componentWillMount() {
-  }
-
   render() {
     console.log('AUTH HAS RENDERED')
+    const { navigate } = this.props.navigation;
     return (
       <View style={s.container}>
-        {binaryRender(this.state.hasAccount, <Login />, <Signup />)}
+        {binaryRender(this.state.hasAccount, <Login nav={navigate} />, <Signup nav={navigate} />)}
         <SimpleBtn
           callback={this.accessMethod.bind(this)}
           buttonText={this.state.hasAccount ? 'Create Account' : 'Login Account'} //Button text depends on hasAccount state
