@@ -44,25 +44,13 @@ class CharDetails extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoaded: false,
       showItemDetails: false,
       showItemCount: false,
       showAddItem: false,
       items: [],
       selection: null
     };
-  }
-
-  getInventory() { //populates the component with inventory data
-    axios.get(path+api.inventory.all, {
-      params: {
-        charId: this.props.subject.id
-      }
-    })
-      .then(res => {
-        let data = res.data;
-        this.setState({items: data});
-      })
-      .catch(error => console.error(error));
   }
 
   setSelection(entry, modal) {
@@ -116,49 +104,62 @@ class CharDetails extends Component {
   }
 
   backHome() {
-    Actions.Home({view: true});
+    const { goBack, setParams } = this.props.navigation;
+    setParams({ origin: 'CharDetails' });
+    goBack();
   }
 
   componentDidMount() {
-    this.getInventory();
+    if (this.props.selectedChar) {
+      this.setState({ isLoaded: true });
+    }
   }
 
   render() {
-    return (
-      <View style={s.container}>
-        <MainNav
-          controls={[
-            {callback: this.backHome.bind(this), text: 'Back'},
-            {callback: this.showAddItem.bind(this), text: 'Add'}
-          ]}
-        />
+    console.log('CHARDETAILS HAS RENDERED')
+    console.log('CHAR_DETAILS PROPS:', this.props)
+    const { goBack, navigate } = this.props.navigation;
 
-        <Text style={s.title}>{this.props.selectedChar.char_name}</Text>
+    if (!this.state.isLoaded) {
+      return <ActivityIndicator style={{'flex': 1}} />
+    } else {
+      return (
+        <View style={s.container}>
+          <MainNav
+            nav={navigate}
+            stack={this.props.navigation.dispatch}
+            controls={[
+              {callback: this.backHome.bind(this), text: 'Back'},
+              {callback: this.showAddItem.bind(this), text: 'Add'}
+            ]}
+          />
 
-        <CharInventory
-          character={this.props.selectedChar}
-          showItemDetails={this.state.showItemDetails}
-          showItemCount={this.state.showItemCount}
-          closeModal={this.closeModal.bind(this)}
-          updateCount={this.updateCount.bind(this)}
-          removeEntry={this.removeEntry.bind(this)}
-          items={this.props.selectedChar.inventories}
-          setSelection={this.setSelection.bind(this)}
-          selection={this.state.selection}
-          getInventory={this.getInventory.bind(this)}
-        />
+          <Text style={s.title}>{this.props.selectedChar.char_name}</Text>
 
-        <Modal isVisible={this.state.showAddItem}>
-          <View>
-            <AddItem
-              addItem={this.addItem.bind(this)}
-              closeModal={this.closeModal.bind(this)}
-            />
-          </View>
-        </Modal>
+          <CharInventory
+            character={this.props.selectedChar}
+            showItemDetails={this.state.showItemDetails}
+            showItemCount={this.state.showItemCount}
+            closeModal={this.closeModal.bind(this)}
+            updateCount={this.updateCount.bind(this)}
+            removeEntry={this.removeEntry.bind(this)}
+            items={this.props.selectedChar.inventories}
+            setSelection={this.setSelection.bind(this)}
+            selection={this.state.selection}
+          />
 
-      </View>
-    )
+          <Modal isVisible={this.state.showAddItem}>
+            <View>
+              <AddItem
+                addItem={this.addItem.bind(this)}
+                closeModal={this.closeModal.bind(this)}
+              />
+            </View>
+          </Modal>
+
+        </View>
+      )
+    }
   }
 }
 

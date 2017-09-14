@@ -8,7 +8,7 @@ export function selectCharacter(character) { //Character
   };
 };
 
-export function selectGames(game) { //Game
+export function selectGame(game) { //Game
   return {
     type: types.SET_SELECTEDGAME,
     game,

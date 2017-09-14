@@ -1,7 +1,6 @@
 /* Main App Container */
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage, TouchableHighlight, View, Text} from 'react-native';
-// import {Router, Scene} from 'react-native-router-flux';
+import { ActivityIndicator, AsyncStorage } from 'react-native';
 import { StackNavigator, addNavigationHelpers } from 'react-navigation';
 /* Redux Hookup */
 import { connect } from 'react-redux';
@@ -48,6 +47,7 @@ class App extends Component {
       },
       {
         initialRouteName: (this.props.token ? 'Home' : 'Auth'), //if a session token exists, start at "Home", otherwise start at "Auth"
+        headerMode: 'none',
       },
     );
 

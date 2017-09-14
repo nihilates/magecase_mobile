@@ -40,10 +40,13 @@ class DisplayElements extends Component {
   navigate(element) {
     // (this.props.view ? Actions.CharDetails : Actions.GameDetails)({subject: element})
     if (this.props.view) {
-      this.props.selectCharacter(element);
-      Actions.CharDetails({subject: element})
+      this.props.selectCharacter(element)
+      this.props.nav('CharDetails')
+      // Actions.CharDetails({subject: element})
     } else {
-      Actions.GameDetails({subject: element})
+      this.props.selectGame(element)
+      this.props.nav('GameDetails')
+      // Actions.GameDetails({subject: element})
     }
   }
 

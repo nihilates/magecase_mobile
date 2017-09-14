@@ -7,7 +7,6 @@ import {
   Text,
   View
 } from 'react-native';
-import { Actions } from 'react-native-router-flux'; //router navigation
 import axios from 'axios'; //axios for AJAX calls
 /* Utility Functions */
 import { loadFile } from './_utility/storageUtils.js';
@@ -42,10 +41,6 @@ const mapStateToProps = state => {
 
 /* Component Body */
 class Home extends Component {
-  static navigationOptions = {
-    header: null,
-  };
-
   constructor(props) {
     super(props);
     const { navigate } = this.props.navigation;
@@ -68,7 +63,7 @@ class Home extends Component {
     this.setState({showModal: false});
   }
 
-  splitAccount(account) {
+  splitAccount(account) { //method to split the elements of props.account into their own states for individual manipulation throughout the app
     this.props.setAssets(account.asset_types);
     this.props.setChars(account.characters);
     this.props.setCurrency(account.currency_systems);
@@ -100,20 +95,18 @@ class Home extends Component {
 
   render() {
     console.log('HOME HAS RENDERED')
-    const { navigate } = this.props.navigation;
+    console.log('HOME PROPS', this.props)
+    const { reset, navigate } = this.props.navigation;
 
     if (!this.state.isLoaded) {
-      return (
-        <View style={s.indicate}>
-          <ActivityIndicator />
-        </View>
-      )
+      return <ActivityIndicator style={{'flex': 1}} />
     } else {
       return (
         <View style={s.container}>
           <MainNav
             view={this.state.view}
             nav={navigate}
+            stack={this.props.navigation.dispatch}
             controls={[ //MainNav's "controls" property takes an array of objects to render each button on the left side of the bar
                 {callback: this.switchView.bind(this), text: (this.state.view ? 'Games' : 'Characters')},
                 {callback: this.createNew.bind(this), text: 'Add'}
@@ -124,6 +117,7 @@ class Home extends Component {
 
           <DisplayElements //Display for all characters or games, depending on which is currently in view
             view={this.state.view}
+            nav={navigate}
           />
 
           <Modal isVisible={this.state.showModal}>

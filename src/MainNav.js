@@ -8,6 +8,7 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { NavigationActions } from 'react-navigation';
 /* Import Utility Functions */
 import { removeFile } from './_utility/storageUtils.js';
 /* Import Custom Components */
@@ -19,7 +20,9 @@ import { ActionCreators } from './_actions';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
-const mapStateToProps = state => {return {}};
+const mapStateToProps = state => {return {
+  page: state.page
+}};
 
 /* Component Body */
 class MainNav extends Component {
@@ -29,10 +32,18 @@ class MainNav extends Component {
   }
 
   userLogout() { //delete session token upon logout
-    removeFile('session', this.props.nav, 'Auth');
+    const reset = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Auth' })],
+    });
+
+    removeFile('session');
+    this.props.nav('Auth');
+    if (this.props.stack) this.props.stack(reset);
   }
 
   render() {
+    console.log('MAIN NAV PROPS:', this.props)
     return (
       <View style={s.container}>
         <View style={s.controls}>

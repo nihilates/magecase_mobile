@@ -28,10 +28,6 @@ const mapStateToProps = state => {
 
 /* Component Body */
 class Auth extends Component {
-  static navigationOptions = {
-    header: null,
-  };
-
   constructor(props) {
     super(props);
     this.state = {
@@ -46,7 +42,9 @@ class Auth extends Component {
 
   render() {
     console.log('AUTH HAS RENDERED')
+    console.log('AUTH PROPS:', this.props)
     const { navigate } = this.props.navigation;
+
     return (
       <View style={s.container}>
         {binaryRender(this.state.hasAccount, <Login nav={navigate} />, <Signup nav={navigate} />)}

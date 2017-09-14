@@ -126,7 +126,7 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);
 
 const s = StyleSheet.create({
   container: {

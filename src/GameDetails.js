@@ -5,8 +5,18 @@ import {
   Text,
   View
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {return {
+  selectedGame: state.selectedGame
+}};
+
+/* Component Body */
 class GameDetails extends Component {
   constructor(props) {
     super(props);
@@ -14,14 +24,18 @@ class GameDetails extends Component {
   }
 
   backHome() {
-    Actions.Home({view: false});
+    const { goBack } = this.props.navigation
+    goBack();
+    // Actions.Home({view: false});
   }
 
   render() {
+    console.log('GAMEDETAILS RENDERED')
+    console.log('GAME_DETAILS PROPS:', this.props)
     return (
       <View style={s.container}>
         <Text style={s.title}>Game Details</Text>
-        <Text>{JSON.stringify(this.props.subject)}</Text>
+        <Text>{JSON.stringify(this.props.selectedGame)}</Text>
         <TouchableOpacity onPress={this.backHome.bind(this)}>
             <Text style={s.textBtn}> Back </Text>
         </TouchableOpacity>
@@ -30,7 +44,7 @@ class GameDetails extends Component {
   }
 }
 
-export default GameDetails;
+export default connect(mapStateToProps, mapDispatchToProps)(GameDetails);
 
 const s = StyleSheet.create({
   container: {
