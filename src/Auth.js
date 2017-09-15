@@ -5,6 +5,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import Modal from 'react-native-modal';
 /* Helper Functions */
 import { binaryRender } from './_utility/generalUtils.js'; //binaryRender helper function allows boolean rendering of 2 different components
 /* Import Custom Components */
@@ -32,7 +33,6 @@ class Auth extends Component {
     super(props);
     this.state = {
       hasAccount: true, //if hasAccount is "true", shows login page. Otherwise, it shows signup page
-      loggedOut: !this.props.account,
     };
   }
 
@@ -42,11 +42,14 @@ class Auth extends Component {
 
   render() {
     console.log('AUTH HAS RENDERED')
-    const { navigate } = this.props.navigation;
+    const { navigate } = this.props.navigation; //declare navigation props to be used within sub components
 
     return (
       <View style={s.container}>
-        {binaryRender(this.state.hasAccount, <Login nav={navigate} />, <Signup nav={navigate} />)}
+        {binaryRender(this.state.hasAccount,
+          <Login nav={navigate} />,
+          <Signup nav={navigate} />
+        )}
         <SimpleBtn
           callback={this.accessMethod.bind(this)}
           buttonText={this.state.hasAccount ? 'Create Account' : 'Login Account'} //Button text depends on hasAccount state

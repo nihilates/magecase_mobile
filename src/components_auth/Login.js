@@ -33,6 +33,7 @@ class Login extends Component {
 
   userLogin() { //Method to submit login credentials
     if (!this.state.username || !this.state.password) return; //if there is no username OR password, return empty (do not proceed)
+
     axios.get(path+api.user.login, {
       params: {
         identity: this.state.username,

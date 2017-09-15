@@ -18,23 +18,15 @@ import { ActionCreators } from '../_actions';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
-const mapStateToProps = state => {
-  return {
-    items: state.items,
-  }
-};
+const mapStateToProps = state => {return {}};
 
 class ItemEntry extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      entry: displayMatch(this.props.items, 'id', this.props.entry.itemId),
-    };
+    this.state = {};
   }
 
   render() {
-    console.log('ItemEntry says:', this.state.entry)
-    console.log('Could be...', displayMatch(this.props.items, 'id', this.props.entry.itemId))
     return (
       <View style={s.container}>
         <SimpleBtn

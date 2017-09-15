@@ -40,18 +40,14 @@ class CharInventory extends Component {
   }
 
   render() {
-    console.log('CHAR INVENTORY:', this.props.selectedChar)
     return (
       <View style={s.container}>
         <ScrollView>
           <Text style={s.title}>Character Inventory</Text>
           {this.props.selectedChar.inventories.map((entry, i) => {
-            console.log('Char Inventory Entry', entry)
             return (
               <ItemEntry key={i} index={i}
-                charId={this.props.selectedChar.id}
                 setSelection={this.props.setSelection}
-                updateCount={this.props.updateCount}
                 entry={entry}
               />
             )
@@ -69,11 +65,6 @@ class CharInventory extends Component {
         <Modal isVisible={this.props.showItemCount}>
           <View>
             <SetCount
-              itemId={this.props.items[this.props.selection]}
-              count={this.props.items[this.props.selection]}
-              updateCount={this.props.updateCount}
-              removeEntry={this.props.removeEntry}
-              getInventory={this.props.getInventory}
               closeModal={this.props.closeModal}
             />
           </View>

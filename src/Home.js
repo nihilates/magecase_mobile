@@ -60,7 +60,7 @@ class Home extends Component {
   }
 
   closeModal() { //method to close the current modal, sent to the ModalCreate component
-    this.setState({showModal: false});
+    this.setState({showModal: false}); //hide the modal
   }
 
   splitAccount(account) { //method to split the elements of props.account into their own states for individual manipulation throughout the app
@@ -75,7 +75,7 @@ class Home extends Component {
   }
 
   componentDidMount() {
-    const { navigate } = this.props.navigation; //Sets Navigation Controls
+    const { navigate } = this.props.navigation; //declare navigation props to be used within sub components
 
     if (!this.props.account) { //if an account does not already exist in the store... (i.e. A session token already exists)
       loadFile('accountData', this.props.setAccount) //load the accountData file from AsyncStorage and set the loaded data with setAccount

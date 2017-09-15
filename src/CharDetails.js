@@ -48,8 +48,6 @@ class CharDetails extends Component {
       showItemDetails: false,
       showItemCount: false,
       showAddItem: false,
-      items: [],
-      selection: null
     };
   }
 
@@ -71,41 +69,8 @@ class CharDetails extends Component {
     this.setState({showItemDetails: false, showItemCount: false, showAddItem: false});
   }
 
-  updateCount(itemId, count) {
-    axios.put(path+api.inventory.update, {
-      charId: this.props.subject.id,
-      id: itemId,
-      count: count
-    })
-    .then(data => console.log(data))
-    .then(() => this.getInventory())
-    .catch(error => console.error(error));
-  }
-
-  removeEntry(inv_id) {
-    axios.delete(path+api.inventory.remove, {
-      data: {
-        charId: this.props.subject.id,
-        id: inv_id
-      }
-    })
-    .then(() => this.getInventory())
-    .catch(error => console.error(error));
-  }
-
-  addItem(item, count=1) {
-    axios.post(path+api.inventory.add, {
-      charId: this.props.subject.id,
-      itemId: item,
-      count: count
-    })
-    .then(() => this.getInventory())
-    .catch(error => console.error(error));
-  }
-
   backHome() {
-    const { goBack, setParams } = this.props.navigation;
-    setParams({ origin: 'CharDetails' });
+    const { goBack } = this.props.navigation;
     goBack();
   }
 
@@ -117,7 +82,6 @@ class CharDetails extends Component {
 
   render() {
     console.log('CHARDETAILS HAS RENDERED')
-    console.log('CHAR_DETAILS PROPS:', this.props)
     const { goBack, navigate } = this.props.navigation;
 
     if (!this.state.isLoaded) {
@@ -139,18 +103,13 @@ class CharDetails extends Component {
           <CharInventory
             showItemDetails={this.state.showItemDetails}
             showItemCount={this.state.showItemCount}
-            closeModal={this.closeModal.bind(this)}
-            updateCount={this.updateCount.bind(this)}
-            removeEntry={this.removeEntry.bind(this)}
-            items={this.props.selectedChar.inventories}
             setSelection={this.setSelection.bind(this)}
-            selection={this.state.selection}
+            closeModal={this.closeModal.bind(this)}
           />
 
           <Modal isVisible={this.state.showAddItem}>
             <View>
               <AddItem
-                addItem={this.addItem.bind(this)}
                 closeModal={this.closeModal.bind(this)}
               />
             </View>
