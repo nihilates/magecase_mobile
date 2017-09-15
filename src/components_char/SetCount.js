@@ -10,8 +10,10 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 /* Helper Functions */
+import { deepRemove, updateEntry, addTo, removeFrom } from '../_data/manageData.js';
 import { displayMatch } from '../_utility/dataUtils.js';
 import { binaryRender } from '../_utility/generalUtils.js';
+import { replaceFile } from '../_utility/storageUtils.js';
 /* Import API Config */
 import axios from 'axios'; //axios for AJAX calls
 import { path, api } from '../_config.js';
@@ -27,6 +29,8 @@ import { ActionCreators } from '../_actions';
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
 const mapStateToProps = state => {
   return {
+    account: state.account,
+    selectedChar: state.selectedChar,
     selectedEntry: state.selectedEntry,
     items: state.items,
   }
@@ -39,7 +43,7 @@ class SetCount extends Component {
     this.state = {
       itemId: displayMatch(this.props.items, 'id', this.props.selectedEntry.itemId),
       inventoryId: this.props.selectedEntry.id,
-      count: this.props.selectedEntry.count,
+      count: this.props.selectedEntry.count || 1,
       minimum: this.props.minimum || 0,
       maximum: this.props.maximum || 9999,
     };
@@ -47,33 +51,61 @@ class SetCount extends Component {
 
   changeValue(num) {
     let newVal = this.state.count+num;
-    if (newVal>=this.state.minimum) this.setState({count: newVal});
+    if (newVal>=this.state.minimum) this.setState({ count: newVal });
   }
 
   addEntry() {
-    this.props.addEntry(this.state.itemId, this.state.count);
-    this.props.closeModal();
+    var entry = null;
+    axios.post(path+api.inventory.add, {
+      charId: this.props.selectedChar.id,
+      itemId: this.props.entry.id,
+      count: this.state.count
+    })
+    .then(resp => entry = resp.data)
+    .catch(error => console.log(error) );
+
+    addTo(this.props.selectedChar.inventories, this.props.entry, this.state.count, this.props.selectedChar, entry)
+    replaceFile('accountData', this.props.account); //save the newly updated account details with AsyncStorage
+    this.props.closeModal(); //close the modal
   }
 
-  updateCount() {
-    this.props.updateCount(this.state.inventoryId, this.state.count);
-    this.props.closeModal();
+  updateCount() { //Method to update entry count both locally and on the server
+    axios.put(path+api.inventory.update, {
+      charId: this.props.selectedChar.id,
+      id: this.props.selectedEntry.id,
+      count: this.state.count
+    })
+    .catch(error => console.log(error));
+
+    updateEntry(this.props.selectedEntry, 'count', this.state.count); //update the entry in the Redux state
+    replaceFile('accountData', this.props.account); //save the newly updated account details with AsyncStorage
+    this.props.closeModal(); //close the modal
   }
 
-  confirmDelete() {
+  confirmDelete() { //Method to confirm from the user if they intend to delete an item from the inventory
     Alert.alert(
       'Delete Item?',
       '',
       [
-        {text: 'Okay', onPress: () => {
-          this.props.removeEntry(this.state.inventoryId);
-          this.props.closeModal();
+        {text: 'Yes', onPress: () => { //if "Yes" is pressed, proceed to next step...
+          axios.delete(path+api.inventory.remove, {
+            data: {
+              charId: this.props.selectedChar.id,
+              id: this.props.selectedEntry.id
+            }
+          })
+          .catch(error => console.log(error));
+
+          removeFrom(this.props.selectedChar.inventories, 'id', this.props.selectedEntry.id);
+          replaceFile('accountData', this.props.account); //save the newly updated account details with AsyncStorage
+          this.props.closeModal(); //close the modal
         }},
-        {text: 'Cancel', onPress: () => {} }
+        {text: 'Cancel', onPress: () => {} } //if "Cancel" is pressed, do nothing
       ]);
   }
 
   render() {
+    console.log('Set Count Props', this.props)
     return (
       <View style={s.container}>
         <View>

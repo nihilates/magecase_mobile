@@ -1,7 +1,6 @@
 /* Methods for Manipulating AsyncStorage on the Device */
 import { AsyncStorage, Alert } from 'react-native'; //required for AsyncStorage token saving functions
 
-
 const saveFile = async (fileName, data) => { //Enter desired fileName (string) and data to save (object)
   try {
     await AsyncStorage.setItem(fileName, JSON.stringify(data) ); //Stringify the data before storing it

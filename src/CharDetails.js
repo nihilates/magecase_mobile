@@ -137,7 +137,6 @@ class CharDetails extends Component {
           <Text style={s.title}>{this.props.selectedChar.char_name}</Text>
 
           <CharInventory
-            character={this.props.selectedChar}
             showItemDetails={this.state.showItemDetails}
             showItemCount={this.state.showItemCount}
             closeModal={this.closeModal.bind(this)}

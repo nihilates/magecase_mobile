@@ -51,7 +51,9 @@ class Login extends Component {
         Alert.alert('Something went wrong', 'Please try again later.'); //if this error is thrown, something must be wrong on the server's side
       }
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      Alert.alert('Network Error', 'Server could not be reached at this time');
+    });
   }
 
   render() {

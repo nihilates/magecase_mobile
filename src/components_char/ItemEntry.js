@@ -24,7 +24,6 @@ const mapStateToProps = state => {
   }
 };
 
-
 class ItemEntry extends Component {
   constructor(props) {
     super(props);
@@ -34,13 +33,13 @@ class ItemEntry extends Component {
   }
 
   render() {
-    console.log('Item Entry:', this.props.entry)
-    console.log(this.state.entry.item_name)
+    console.log('ItemEntry says:', this.state.entry)
+    console.log('Could be...', displayMatch(this.props.items, 'id', this.props.entry.itemId))
     return (
       <View style={s.container}>
         <SimpleBtn
           callback={() => this.props.setSelection(this.props.entry, 'details')}
-          buttonText={this.state.entry.item_name}
+          buttonText={this.props.entry.item.item_name}
         />
         <SimpleBtn
           callback={() => this.props.setSelection(this.props.entry, 'count')}
