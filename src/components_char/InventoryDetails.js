@@ -1,3 +1,4 @@
+/* Component to Display Details About An Inventory Item Selected From The CharDetails */
 import React, { Component } from 'react';
 import {
   Picker,
@@ -8,14 +9,31 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+/* Helper Functions */
+import { displayMatch } from '../_utility/dataUtils.js';
+import { binaryRender } from '../_utility/generalUtils.js';
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
+import { path, api } from '../_config.js';
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import DropdownMenu from '.././components_misc/DropdownMenu.js';
-import axios from 'axios'; //axios for AJAX calls
-import { binaryRender } from '../_util.js';
-//import api configurations
-import { path, api } from '../_config.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    selectedChar: state.selectedChar,
+    selectedEntry: state.selectedEntry,
+    items: state.items,
+  }
+};
 
+/* Body of Component */
 class InventoryDetails extends Component {
   constructor(props) {
     super(props);
@@ -23,7 +41,7 @@ class InventoryDetails extends Component {
   }
 
   render() {
-    let entry = this.props.selection;
+    let entry = displayMatch(this.props.items, 'id', this.props.selectedEntry.itemId);
     return (
       <View style={s.container}>
         <View style={s.topRow}>
@@ -32,26 +50,26 @@ class InventoryDetails extends Component {
           </View>
 
           <View style={s.nameRow}>
-            <Text style={s.title}>{entry.item.item_name}</Text>
-            <Text style={s.subtext}>{entry.item.item_subtype.sub_name}</Text>
+            <Text style={s.title}>{entry.item_name}</Text>
+            <Text style={s.subtext}>{entry.item_subtype.sub_name}</Text>
           </View>
 
           <View style={s.element}>
-            <Text>x{entry.count}</Text>
+            <Text>x{this.props.selectedEntry.count}</Text>
           </View>
         </View>
 
-        {binaryRender(entry.item.properties, (
+        {binaryRender(entry.properties, (
           <View style={s.infoRow}>
             <Text style={s.label}>Details</Text>
-            <Text style={s.element}>{entry.item.properties}</Text>
+            <Text style={s.element}>{entry.properties}</Text>
           </View>
         ), null)}
 
-        {binaryRender(entry.item.description, (
+        {binaryRender(entry.description, (
           <View style={s.infoRow}>
             <Text style={s.label}>Description</Text>
-            <Text style={s.element}>{entry.item.description}</Text>
+            <Text style={s.element}>{entry.description}</Text>
           </View>
         ), null)}
 
@@ -63,7 +81,7 @@ class InventoryDetails extends Component {
   }
 }
 
-export default InventoryDetails;
+export default connect(mapStateToProps, mapDispatchToProps)(InventoryDetails);
 
 const s = StyleSheet.create({
   container: {

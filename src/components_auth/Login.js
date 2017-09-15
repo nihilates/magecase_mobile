@@ -1,3 +1,4 @@
+/* Component For Logging Into Existing Account */
 import React, { Component } from 'react';
 import {
   Alert,
@@ -7,14 +8,24 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { saveToken } from '../_util.js';
+/* Helper Functions */
+import { saveFile } from '../_utility/storageUtils.js';
+import { buildAccount } from '../_data/buildAccount.js';
+/* Import API Config */
 import axios from 'axios'; //axios for AJAX calls
-//import api configurations
 import { path, api } from '../_config.js';
-//import custom components
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
 
-export default class Login extends Component {
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {return {}};
+
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {username: '', password: ''};
@@ -22,6 +33,7 @@ export default class Login extends Component {
 
   userLogin() { //Method to submit login credentials
     if (!this.state.username || !this.state.password) return; //if there is no username OR password, return empty (do not proceed)
+
     axios.get(path+api.user.login, {
       params: {
         identity: this.state.username,
@@ -30,15 +42,19 @@ export default class Login extends Component {
     })
     .then(res => {
       if (res.status === 200) { //if the response was 200...
-        saveToken('session', res.data); //save the returned data (non-sensitive account info & JSON webtoken)
-        Actions.Home(); //transition page to the "Home" component
+        saveFile('session', res.data); //Save the Webtoken that gets returned upon successful login
+        buildAccount({identity: this.state.username, password: this.state.password}, this.props.setAccount) //grab all initial account data, including defaults
+          .then(() => this.props.nav('Home') ) //Navigate to Home page
+          .catch(err => console.error(err) );
       } else if (res.status === 204) { //if the response was 204...
         Alert.alert('Incorrect username or password', 'Please try again.'); //send alert that either a username or password was incorrect
       } else {
         Alert.alert('Something went wrong', 'Please try again later.'); //if this error is thrown, something must be wrong on the server's side
       }
     })
-    .catch(error => console.error(error));
+    .catch(error => {
+      Alert.alert('Network Error', 'Server could not be reached at this time');
+    });
   }
 
   render() {
@@ -80,6 +96,8 @@ export default class Login extends Component {
     )
   }
 }
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);
 
 const s = StyleSheet.create({
   container: {

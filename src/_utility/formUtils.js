@@ -1,17 +1,11 @@
-/*Helper Functions for use components*/
-import { AsyncStorage, Alert } from 'react-native'; //required for AsyncStorage token saving functions
+/* Helper Functions For Use With Forms */
 
-module.exports = { //returns one or the other component based on a condition check
-  binaryRender: (condition, main, other) => { //takes a condition as the 1st parameter and two components as the 2nd and 3rd.
-    return condition ? main : other; //if the input condition is true, render the main component. Otherwise, render the other component.
-  },
-
+module.exports = {
   //Method to verify that text input fields have all be filled with correct formatting
   chkForm: form => {
     //check that all fields have been filled
     for (key in form) {
       if (form[key].length===null || form[key].length<1) {
-        console.log(key+':'+form[key])
         Alert.alert('Please fill out all fields');
         return false;
       }
@@ -22,29 +16,9 @@ module.exports = { //returns one or the other component based on a condition che
     if (form.password && !chkPwd(form.password, form.pwdConfirm)) return false; //if the passwords match and are valid...
     return true; //if all pass, return true
   },
-
-  //save token data to the device
-  saveToken: async (name, data) => {
-    try {
-      await AsyncStorage.setItem(name, JSON.stringify(data));
-    } catch (error) {
-      console.error('AsyncStorage error:', error.message);
-    }
-  },
-
-  getToken: async callback => {
-    //get the token, if one exists
-    await AsyncStorage.getItem('session').then(session => {
-      let data = JSON.parse(session);
-      let idToken = data !== null ? data.auth.id_token : null;
-      let user = data !== null ? data.userData : null;
-
-      callback({ token: idToken, userData: user, isLoaded: true });
-    });
-  },
 };
 
-//Internal Helper Functions
+/* Internal Helper Functions */
 const chkUName = username => { //takes a submitted username string
   let regex = /^[a-z\-0-9]+$/i;
   if (username.length<6) {

@@ -1,3 +1,4 @@
+/* Component For Registering a New Account */
 import React, { Component } from 'react';
 import {
   Alert,
@@ -8,17 +9,29 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { saveToken, chkForm } from '../_util.js';
-import axios from 'axios'; //axios for AJAX calls
-//import api configurations
+/* Helper Functions */
+import { buildAccount } from '../_data/buildAccount.js';
+import { chkForm } from '../_utility/formUtils.js';
+import { saveFile } from '../_utility/storageUtils.js';
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls 
 import { path, api } from '../_config.js';
-//import custom components
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {return {}};
+
+/* Component Body */
 class Signup extends Component {
   constructor(props) {
     super(props);
-    this.state = {username: null, email: null, password: null, pwdConfirm: null};
+    this.state = {username: '', email: '', password: '', pwdConfirm: ''};
   }
 
   userSignup() { //method to process user inputs during signup process
@@ -36,8 +49,10 @@ class Signup extends Component {
       })
       .then(res => {
         if (res.status === 200) { //if response is 200...
-          saveToken('session', res.data) //save non-sensitive user account information and JSON webtoken
-          Actions.Home(); //transition to the Home component page
+          saveFile('session', res.data) //save non-sensitive user account information and JSON webtoken
+          buildAccount({identity: this.state.username, password: this.state.password}, this.props.setAccount)
+            .then(() => this.props.nav('Home') ) //transition to the Home component page
+            .catch(err => console.error(err) );
         } else if (res.status === 204) { //if response is 204...
           Alert.alert('That username already exists.'); //a username must already exist
         } else {
@@ -111,7 +126,7 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default connect(mapStateToProps, mapDispatchToProps)(Signup);
 
 const s = StyleSheet.create({
   container: {

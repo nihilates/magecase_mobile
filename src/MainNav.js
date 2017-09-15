@@ -1,33 +1,49 @@
-//Landing Page after authentication.
+/* Top Navigator For All Pages */
 import React, { Component } from 'react';
 import {
-  AsyncStorage,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import {Actions} from 'react-native-router-flux';
-/*Import Custom Components*/
+import { Actions } from 'react-native-router-flux';
+import { NavigationActions } from 'react-navigation';
+/* Import Utility Functions */
+import { removeFile } from './_utility/storageUtils.js';
+/* Import Custom Components */
 import { SimpleBtn } from './components_misc/BasicCmpnts.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {return {
+  page: state.page
+}};
+
+/* Component Body */
 class MainNav extends Component {
   constructor(props) {
     super(props);
     this.state = {};
   }
 
-  async userLogout() {
-    try {
-      await AsyncStorage.removeItem('session');
-      Actions.Auth();
-    } catch (error) {
-      console.log('AsyncStorage error: ' + error.message);
-    }
+  userLogout() { //delete session token upon logout
+    const reset = NavigationActions.reset({
+      index: 0,
+      actions: [NavigationActions.navigate({ routeName: 'Auth' })],
+    });
+
+    removeFile('session');
+    // this.props.nav('Auth');
+    if (this.props.stack) this.props.stack(reset);
   }
 
   render() {
+    console.log('MAIN NAV PROPS:', this.props)
     return (
       <View style={s.container}>
         <View style={s.controls}>
@@ -44,7 +60,7 @@ class MainNav extends Component {
   }
 }
 
-export default MainNav;
+export default connect(mapStateToProps, mapDispatchToProps)(MainNav);
 
 const s = StyleSheet.create({
   container: {

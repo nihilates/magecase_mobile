@@ -1,73 +1,63 @@
+/* Main App Container */
 import React, {Component} from 'react';
-import {ActivityIndicator, AsyncStorage} from 'react-native';
-import {Router, Scene} from 'react-native-router-flux';
-//IMPORT PAGES//
-import Auth from './components/Auth.js';
-import Home from './components/Home.js';
-import CharDetails from './components/CharDetails.js';
-import GameDetails from './components/GameDetails.js';
+import { ActivityIndicator } from 'react-native';
+import { StackNavigator } from 'react-navigation';
+/* Utility Functions */
+import { loadFile } from './src/_utility/storageUtils.js';
+/* Import Component Pages */
+import Auth from './src/Auth.js';
+import Home from './src/Home.js';
+import CharDetails from './src/CharDetails.js';
+import GameDetails from './src/GameDetails.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from './src/_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {return {
+  token: state.token,
+}};
+
+/* Component Body */
 class App extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      hasData: false,
-      isLoaded: false,
-      token: null,
-      userData: null,
+      isLoaded: false
     };
   }
 
-  async componentDidMount() {
-    //get the token, if one exists
-    await AsyncStorage.getItem('session').then(session => {
-      this.setState({ hasData: session !== null, isLoaded: true });
-    });
+  componentDidMount() {
+    loadFile('session', this.props.setToken) //load the session token, if one exists. If not, it will return null and a Redux store will not be updated
+      .then(() => {
+        this.setState({ isLoaded: true });
+      })
+      .catch(err => console.error(err) );
   }
 
   render() {
-    if (!this.state.isLoaded) {
-      return (
-        <ActivityIndicator />
-      )
-    } else {
-      return(
-        <Router>
-          <Scene key='root'>
-            <Scene
-              component={Auth}
-              hideNavBar={true}
-              initial={!this.state.hasData}
-              key='Auth'
-              title='Authentication'
-            />
-            <Scene
-              component={Home}
-              hideNavBar={true}
-              initial={this.state.hasData}
-              view={true} //defaults the landing page to Character; Allows a psuedo memory of last visited page
-              token={this.state.token}
-              key='Home'
-              title='Home Page'
-            />
-            <Scene
-              component={CharDetails}
-              hideNavBar={true}
-              key='CharDetails'
-              title='Character Details'
-            />
-            <Scene
-              component={GameDetails}
-              hideNavBar={true}
-              token={this.state.token}
-              key='GameDetails'
-              title='Game Details'
-            />
-          </Scene>
-        </Router>
-      )
+    /* Set Navigation */
+    const Navigation = StackNavigator(
+      {
+        Auth: { screen: Auth },
+        Home: { screen: Home },
+        CharDetails: { screen: CharDetails },
+        GameDetails: { screen: GameDetails },
+      },
+      {
+        initialRouteName: (this.props.token ? 'Home' : 'Auth'), //if a session token exists, start at "Home", otherwise start at "Auth"
+        headerMode: 'none', //disable default headerMode from all page components
+      },
+    );
+
+    if (!this.state.isLoaded) { //if the app hasn't finished loading from AsyncStorage...
+      return <ActivityIndicator style={{'flex': 1}} /> //Render the ActivityIndicator
+    } else { //otherwise...
+      return <Navigation /> //render the Navigation component
     }
   }
-}
+};
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(App);

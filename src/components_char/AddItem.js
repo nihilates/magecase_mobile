@@ -1,3 +1,4 @@
+/* Component Modal For Adding Items to Character Inventory */
 import React, { Component } from 'react';
 import {
   ScrollView,
@@ -8,74 +9,38 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+/* Helper Functions */
+import { displayOnly } from '../_utility/dataUtils.js';
+import { chkForm } from '../_utility/formUtils.js';
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
+import { path, api } from '../_config.js';
+/* Import Custom Components */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import DropdownMenu from '.././components_misc/DropdownMenu.js';
-import axios from 'axios'; //axios for AJAX calls
-import { chkForm } from '../_util.js';
-//import api configurations
-import { path, api } from '../_config.js';
-//import custom components
 import ItemDetails from './ItemDetails.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    itemTypes: state.itemTypes,
+    items: state.items,
+  }
+};
+
+/* Body of Component */
 class AddItem extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      itemTypes: [],
-      itemSubTypes: [],
-      items: [],
-      selectedType: null,
-      selectedSub: null,
-      selectedItem: null,
-      selectedCount: null,
+      selectedType: this.props.itemTypes[0],
+      selectedSub: this.props.itemTypes[0].item_subtypes[0],
     };
-  }
-
-  getTypes(index=0) { //populates the component with item data
-    axios.get(path+api.item.types)
-      .then(res => {
-        let data = res.data;
-        //sets the returned data to state, and sets the default selected type as the first index
-        this.setState({itemTypes: data, selectedType: data[index]});
-      })
-      .then(() => {
-        this.getSubs();
-      })
-      .catch(error => console.error(error));
-  }
-
-  getSubs(index=0) {
-    axios.get(path+api.item.subtypes, {
-      params: {
-        typeId: this.state.selectedType.id
-      }
-    })
-      .then(res => {
-        let data = res.data;
-        this.setState({itemSubTypes: data, selectedSub: data[index]});
-      })
-      .then(() => {
-        this.getItems();
-      })
-      .catch(error => console.error(error));
-  }
-
-  getItems(index=0) {
-    axios.get(path+api.item.oftype, {
-      params: {
-        typeId: this.state.selectedType.id,
-        subTypeId: this.state.selectedSub.id
-      }
-    })
-      .then(res => {
-        let data = res.data;
-        this.setState({items: data, selectedItem: data[index]});
-      })
-      .catch(error => console.error(error));
-  }
-
-  componentDidMount() {
-    this.getTypes();
   }
 
   render() {
@@ -88,11 +53,11 @@ class AddItem extends Component {
           <Text>Type: </Text>
           <DropdownMenu
             defaultIndex={0}
-            options={this.state.itemTypes.map(type => {
+            options={this.props.itemTypes.map(type => {
               return type.type_name;
             })}
             onSelect={index => {
-              this.getTypes(index);
+              this.setState({ selectedType: this.props.itemTypes[index], selectedSub: this.props.itemTypes[index].item_subtypes[0] });
             }}>
             <Text>{this.state.selectedType ? this.state.selectedType.type_name : "Select Item Type"}</Text>
           </DropdownMenu>
@@ -102,11 +67,11 @@ class AddItem extends Component {
           <Text>Category: </Text>
           <DropdownMenu
             defaultIndex={0}
-            options={this.state.itemSubTypes.map(sub => {
+            options={this.state.selectedType.item_subtypes.map(sub => {
               return sub.sub_name;
             })}
             onSelect={index => {
-              this.getSubs(index);
+              this.setState({ selectedSub: this.state.selectedType.item_subtypes[index] });
             }}>
             <Text>{this.state.selectedSub ? this.state.selectedSub.sub_name : "Select Category"}</Text>
           </DropdownMenu>
@@ -115,7 +80,7 @@ class AddItem extends Component {
         <View style={s.viewRow}>
           <ScrollView horizontal={true}>
             <View style={s.item}>
-              {this.state.items.map((item, i) => {
+              {displayOnly(this.props.items, 'itemSubTypeId', this.state.selectedSub.id).map((item, i) => {
                 return <ItemDetails key={i} selection={item} addItem={this.props.addItem} />
               })}
             </View>
@@ -131,7 +96,8 @@ class AddItem extends Component {
   }
 }
 
-export default AddItem;
+/* Wrap With Redux And Export */
+export default connect(mapStateToProps, mapDispatchToProps)(AddItem);
 
 const s = StyleSheet.create({
   container: {

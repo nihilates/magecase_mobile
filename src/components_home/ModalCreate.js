@@ -7,14 +7,29 @@ import {
   Text,
   View
 } from 'react-native';
-import { Actions } from 'react-native-router-flux';
+import { Actions } from 'react-native-router-flux'; //router controls
+/* Helper Functions */
 import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
-import DropdownMenu from '.././components_misc/DropdownMenu.js';
+import DropdownMenu from '../components_misc/DropdownMenu.js';
 import axios from 'axios'; //axios for AJAX calls
-import { chkForm } from '../_util.js';
+import { chkForm } from '../_utility/formUtils.js';
 //import api configurations
 import { path, api } from '../_config.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    account: state.account,
+    characters: state.characters,
+    currencySystems: state.currencySystems,
+    games: state.games,
+  }
+};
 
 class ModalCreate extends Component {
   constructor(props) {
@@ -27,20 +42,17 @@ class ModalCreate extends Component {
     this.submitData = this.submitData.bind(this);
   }
 
-  submitData() {
-    let body = {
-      userId: this.props.userData.id,
-      currencyId: this.state.selectedSystem,
-    };
-    body[(this.props.view ? 'char_name' : 'game_name')] = this.state.selectedName;
-    if (!chkForm(body)) {
-      return;
-    } else {
-      axios.post(path+(this.props.view ? api.char.create : api.game.create), body)
-      .then(res => this.props.updateList((this.props.view ? 'characters' : 'games'), res.data))
-      .catch(error => console.error(error));
+  submitData() { //method to submit a new character/game to the database
+    let body = {userId: this.props.account.id, currencySystemId: this.state.selectedSystem}; //composes the body of the POST request
+    body[(this.props.view ? 'char_name' : 'game_name')] = this.state.selectedName; //depending on which view is currently selected, add the proper key for "char_name" or "game_name"
 
-      this.props.closeModal();
+    if (!chkForm(body)) { //If all forms haven't been filled...
+      return; //end the method
+    } else { //otherwise...
+      axios.post(path+(this.props.view ? api.char.create : api.game.create), body) //depending on which view is currently selected, use the API path for the correct database table
+        .then(resp => {console.log(resp)}) //TODO: Update the global account state here
+        .then(() => this.props.closeModal() )
+        .catch(error => console.error(error));
     }
   }
 
@@ -80,7 +92,8 @@ class ModalCreate extends Component {
   }
 }
 
-export default ModalCreate;
+// export default ModalCreate;
+export default connect(mapStateToProps, mapDispatchToProps)(ModalCreate);
 
 const s = StyleSheet.create({
   container: {

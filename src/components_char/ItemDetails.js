@@ -1,3 +1,4 @@
+/* Component to Display Item Details When Adding New Items */
 import React, { Component } from 'react';
 import {
   Alert,
@@ -9,17 +10,32 @@ import {
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
-import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 import Modal from 'react-native-modal';
-import DropdownMenu from '.././components_misc/DropdownMenu.js';
+/* Helper Functions */
+import { binaryRender } from '../_utility/generalUtils.js';
+/* Import API Config */
 import axios from 'axios'; //axios for AJAX calls
-import { binaryRender } from '../_util.js';
-//import api configurations
 import { path, api } from '../_config.js';
-//import custom components
+/* Import Custom Components */
 import SetCount from './SetCount.js';
+/* Import Custom Components */
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
+import DropdownMenu from '.././components_misc/DropdownMenu.js';
+/* Redux Hookup */
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '../_actions';
 
+/* Setting Component's Props from Redux Store */
+const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
+const mapStateToProps = state => {
+  return {
+    selectedChar: state.selectedChar,
+    selectedEntry: state.selectedEntry,
+  }
+};
 
+/* Component Body */
 class InventoryDetails extends Component {
   constructor(props) {
     super(props);
@@ -91,7 +107,7 @@ class InventoryDetails extends Component {
           <View style={s.container}>
             <SetCount
               topText="Add how many?"
-              itemId={entry.id}
+              entry={entry}
               minimum={1}
               addEntry={this.props.addItem}
               closeModal={this.closeModal.bind(this)}
@@ -104,7 +120,7 @@ class InventoryDetails extends Component {
   }
 }
 
-export default InventoryDetails;
+export default connect(mapStateToProps, mapDispatchToProps)(InventoryDetails);
 
 const s = StyleSheet.create({
   container: {
