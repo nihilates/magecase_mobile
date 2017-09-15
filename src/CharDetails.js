@@ -2,26 +2,18 @@
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
-  Alert,
-  AsyncStorage,
-  TextInput,
-  TouchableOpacity,
   StyleSheet,
   Text,
   View
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import Modal from 'react-native-modal';
-/* Helper Functions */
-import { displayMatch } from './_utility/dataUtils.js';
-/* Import API Config */
-import axios from 'axios'; //axios for AJAX calls
-import { path, api } from './_config.js';
-//Import Custom Components
-import { SimpleBtn } from './components_misc/BasicCmpnts.js';
+/* Import Custom Components */
 import MainNav from './MainNav.js';
 import AddItem from './components_char/AddItem.js';
 import CharInventory from './components_char/CharInventory.js';
+import InventoryDetails from './components_char/InventoryDetails.js';
+import SetCount from './components_char/SetCount.js';
 /* Redux Hookup */
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -45,39 +37,33 @@ class CharDetails extends Component {
     super(props);
     this.state = {
       isLoaded: false,
-      showItemDetails: false,
-      showItemCount: false,
-      showAddItem: false,
+      showModal: false, //toggle for making modal container visible
+      showItemDetails: false, //toggle for ItemDetails modal
+      showItemCount: false, //toggle for ItemCount modal
+      showAddItem: false, //toggle for AddItem modal
     };
   }
 
-  setSelection(entry, modal) {
-    if (modal==='details') {
-      this.props.selectEntry(entry);
-      this.setState({ showItemDetails: true })
-    } else if (modal==='count') {
-      this.props.selectEntry(entry);
-      this.setState({ showItemCount: true })
-    }
+  setSelection(entry, modal) { //method to set the currectly selected entry and open a modal for it
+    this.props.selectEntry(entry); //sets the Redux entry
+    this.setState( Object.assign({}, { showModal: true }, modal) ); //toggles the modal container and the desired view
   }
 
-  showAddItem() {
-    this.setState({showAddItem: true})
+  showAddItem() { //method to op the AddItem component modal
+    this.setState({ showModal: true, showAddItem: true });
   }
 
-  closeModal() {
-    this.setState({showItemDetails: false, showItemCount: false, showAddItem: false});
+  closeModal() { //method to close the container modal and resets all modal content
+    this.setState({ showModal: false, showItemDetails: false, showItemCount: false, showAddItem: false });
   }
 
-  backHome() {
-    const { goBack } = this.props.navigation;
-    goBack();
+  backHome() { //navigation controls
+    const { goBack } = this.props.navigation; //bind the "goBack' method from the navigation prop
+    goBack(); //invoke to return to previous page
   }
 
   componentDidMount() {
-    if (this.props.selectedChar) {
-      this.setState({ isLoaded: true });
-    }
+    if (this.props.selectedChar) this.setState({ isLoaded: true }); //if a "selectedChar" exists, the the component is loaded
   }
 
   render() {
@@ -107,11 +93,13 @@ class CharDetails extends Component {
             closeModal={this.closeModal.bind(this)}
           />
 
-          <Modal isVisible={this.state.showAddItem}>
+          <Modal isVisible={this.state.showModal}>
             <View>
-              <AddItem
-                closeModal={this.closeModal.bind(this)}
-              />
+              {(()=>{
+                if (this.state.showAddItem) return <AddItem closeModal={this.closeModal.bind(this)} />
+                if (this.state.showItemDetails) return <InventoryDetails closeModal={this.closeModal.bind(this)} />
+                if (this.state.showItemCount) return <SetCount closeModal={this.closeModal.bind(this)} />
+              })()}
             </View>
           </Modal>
 
@@ -119,10 +107,9 @@ class CharDetails extends Component {
       )
     }
   }
-}
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(CharDetails);
-
 
 const s = StyleSheet.create({
   container: {

@@ -53,22 +53,6 @@ class CharInventory extends Component {
             )
           })}
         </ScrollView>
-
-        <Modal isVisible={this.props.showItemDetails}>
-          <View>
-            <InventoryDetails
-              closeModal={this.props.closeModal}
-            />
-          </View>
-        </Modal>
-
-        <Modal isVisible={this.props.showItemCount}>
-          <View>
-            <SetCount
-              closeModal={this.props.closeModal}
-            />
-          </View>
-        </Modal>
       </View>
     )
   }

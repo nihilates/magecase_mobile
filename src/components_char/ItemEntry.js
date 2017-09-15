@@ -30,11 +30,11 @@ class ItemEntry extends Component {
     return (
       <View style={s.container}>
         <SimpleBtn
-          callback={() => this.props.setSelection(this.props.entry, 'details')}
+          callback={() => this.props.setSelection(this.props.entry, {showItemDetails: true})}
           buttonText={this.props.entry.item.item_name}
         />
         <SimpleBtn
-          callback={() => this.props.setSelection(this.props.entry, 'count')}
+          callback={() => this.props.setSelection(this.props.entry, {showItemCount: true})}
           buttonText={"x"+this.props.entry.count}
         />
       </View>
