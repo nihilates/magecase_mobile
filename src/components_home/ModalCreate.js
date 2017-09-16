@@ -60,14 +60,11 @@ class ModalCreate extends Component {
     await axios.post(path+(this.props.view ? api.char.create : api.game.create), body) //depending on which view is currently selected, use the API path for the correct database table
       .then(resp => {
         created = resp.data;
-        console.log('CREATED NOW EQUALS:', created)
       })
-      .catch(error => {
-        console.log(error)
-      });
+      .catch(error => console.log(error) );
 
-    addCharacter(this.props.characters, body.char_name, body, currencySystem, created, this.props.setChars)
-    replaceFile('accountData', Object.assign({}, this.props.account, {characters: this.props.characters}))
+    addCharacter(this.props.characters, body.char_name, body, currencySystem, created, this.props.setChars);
+    replaceFile('accountData', Object.assign({}, this.props.account, { characters: this.props.characters }) );
     this.props.closeModal();
   }
 

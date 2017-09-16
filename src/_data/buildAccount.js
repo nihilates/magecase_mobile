@@ -42,7 +42,6 @@ module.exports = {
     .then(() => { //then replace the File
       if (callback) callback(accountData);
       replaceFile('accountData', accountData);
-
     })
     .catch(err => console.error(err) );
   },

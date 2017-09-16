@@ -107,9 +107,9 @@ class InventoryDetails extends Component {
           <View style={s.container}>
             <SetCount
               topText="Add how many?"
+              addEntry={true}
               entry={entry}
               minimum={1}
-              addEntry={this.props.addItem}
               closeModal={this.closeModal.bind(this)}
             />
           </View>

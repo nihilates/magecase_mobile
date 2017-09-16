@@ -39,27 +39,53 @@ module.exports = {
   },
 
   /* Method to Add an Entry to an Inventory */
-  addInventory: (array, data, count, character, resp, callback) => {
-    if (resp) {
-      resp.item = data;
-      array.push(resp); //push the "resp" into the submitted array
+  addInventory: (array, charId, item, count, created, callback) => {
+    const characters = array.map(i => {return i});
+    let i = characters.findIndex(char => char.id === charId);
+
+    if (created.id) {
+      created.item = item;
+
+      characters[i].inventories.push(created);
     } else {
-      let dt = new Date().toISOString();
+      let dt = new Date().toISOString(); //create a reference to the current date/time in ISO format
       let entry = {
-        characterId: character.id,
+        characterId: charId,
         count: count,
         createdAt: dt,
-        id: data.item_name, //temporary value
-        item: data,
-        itemId: data.id,
+        id: null,
+        item: item,
+        idemId: item.id,
         updatedAt: dt,
-      }
+      };
 
-      array.push(entry); //push the "entry" into the submitted array
+      characters[i].inventories.push(entry);
     }
 
-    if (callback) callback(array); //if a callback was supplied, run the callback on the array
+    if (callback) callback(characters);
   },
+
+  // addInventory: (array, data, count, character, resp, callback) => {
+  //   if (resp) {
+  //     resp.item = data;
+  //     array.push(resp); //push the "resp" into the submitted array
+  //   } else {
+  //     let dt = new Date().toISOString();
+  //     let entry = {
+  //       characterId: character.id,
+  //       count: count,
+  //       createdAt: dt,
+  //       id: data.item_name, //temporary value
+  //       item: data,
+  //       itemId: data.id,
+  //       updatedAt: dt,
+  //     }
+
+  //     array.push(entry); //push the "entry" into the submitted array
+  //   }
+
+  //   if (callback) callback(array); //if a callback was supplied, run the callback on the array
+  // },
 
   /* Method to Update Data Prior to Storing It */
   updateEntry: (entry, key, newVal, callback) => {

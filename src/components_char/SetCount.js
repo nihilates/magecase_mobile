@@ -30,6 +30,7 @@ const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators
 const mapStateToProps = state => {
   return {
     account: state.account,
+    characters: state.characters,
     selectedChar: state.selectedChar,
     selectedEntry: state.selectedEntry,
     items: state.items,
@@ -54,6 +55,26 @@ class SetCount extends Component {
     if (newVal>=this.state.minimum) this.setState({ count: newVal });
   }
 
+  async addEntry() {
+    let created = {};
+    let body = {
+      charId: this.props.selectedChar.id,
+      itemId: this.props.entry.id,
+      count: this.state.count,
+    };
+
+    await axios.post(path+api.inventory.add, body)
+      .then(resp => {
+        created = resp.data;
+      })
+      .catch(error => console.log(error) );
+
+    addInventory(this.props.characters, body.charId, this.props.entry, body.count, created, this.props.setChars);
+    replaceFile('accountData', Object.assign({}, this.props.account, { characters: this.props.characters }) )
+    this.props.closeModal(); //close the modal
+  }
+
+  /*
   addEntry() {
     var entry = null;
     axios.post(path+api.inventory.add, {
@@ -68,6 +89,7 @@ class SetCount extends Component {
     replaceFile('accountData', this.props.account); //save the newly updated account details with AsyncStorage
     this.props.closeModal(); //close the modal
   }
+*/
 
   updateCount() { //Method to update entry count both locally and on the server
     axios.put(path+api.inventory.update, {
@@ -105,7 +127,7 @@ class SetCount extends Component {
   }
 
   render() {
-    console.log('Set Count Props', this.props)
+    console.log('SETCOUNT', this.props)
     return (
       <View style={s.container}>
         <View>
@@ -173,3 +195,20 @@ const s = StyleSheet.create({
     width: 60,
   },
 });
+
+/*
+  addEntry() {
+    var entry = null;
+    axios.post(path+api.inventory.add, {
+      charId: this.props.selectedChar.id,
+      itemId: this.props.entry.id,
+      count: this.state.count
+    })
+      .then(resp => entry = resp.data)
+      .catch(error => console.log(error) );
+
+    addInventory(this.props.selectedChar.inventories, this.props.entry, this.state.count, this.props.selectedChar, entry)
+    replaceFile('accountData', this.props.account); //save the newly updated account details with AsyncStorage
+    this.props.closeModal(); //close the modal
+  }
+*/
