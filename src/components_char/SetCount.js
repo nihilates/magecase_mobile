@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 /* Helper Functions */
-import { deepRemove, updateEntry, addTo, removeFrom } from '../_data/manageData.js';
+import { deepRemove, updateEntry, addInventory, removeFrom } from '../_data/manageData.js';
 import { displayMatch } from '../_utility/dataUtils.js';
 import { binaryRender } from '../_utility/generalUtils.js';
 import { replaceFile } from '../_utility/storageUtils.js';
@@ -61,10 +61,10 @@ class SetCount extends Component {
       itemId: this.props.entry.id,
       count: this.state.count
     })
-    .then(resp => entry = resp.data)
-    .catch(error => console.log(error) );
+      .then(resp => entry = resp.data)
+      .catch(error => console.log(error) );
 
-    addTo(this.props.selectedChar.inventories, this.props.entry, this.state.count, this.props.selectedChar, entry)
+    addInventory(this.props.selectedChar.inventories, this.props.entry, this.state.count, this.props.selectedChar, entry)
     replaceFile('accountData', this.props.account); //save the newly updated account details with AsyncStorage
     this.props.closeModal(); //close the modal
   }

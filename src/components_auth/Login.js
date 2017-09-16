@@ -43,7 +43,7 @@ class Login extends Component {
     .then(res => {
       if (res.status === 200) { //if the response was 200...
         saveFile('session', res.data); //Save the Webtoken that gets returned upon successful login
-        buildAccount({identity: this.state.username, password: this.state.password}, this.props.setAccount) //grab all initial account data, including defaults
+        buildAccount({ identity: this.state.username, password: this.state.password }) //grab all initial account data, including defaults
           .then(() => this.props.nav('Home') ) //Navigate to Home page
           .catch(err => console.error(err) );
       } else if (res.status === 204) { //if the response was 204...

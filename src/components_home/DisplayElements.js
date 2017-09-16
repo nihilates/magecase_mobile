@@ -1,4 +1,4 @@
-//Display component of characters belonging to a logged in user
+/* Component to Display Either Character or Game List */
 import React, { Component } from 'react';
 import {
   ActivityIndicator,
@@ -7,24 +7,24 @@ import {
   Text,
   View
 } from 'react-native';
+/* Helper functions */
+import { Actions } from 'react-native-router-flux';
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
+import { path, api } from '../_config.js';
 /* Redux Hookup */
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '../_actions';
-/* Helper functions */
-import { Actions } from 'react-native-router-flux';
-import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
-import axios from 'axios'; //axios for AJAX calls
-//import api configurations
-import { path, api } from '../_config.js';
 
 /* Setting Component's Props from Redux Store */
 const mapDispatchToProps = dispatch => {return bindActionCreators(ActionCreators, dispatch) };
 const mapStateToProps = state => {
   return {
     account: state.account,
-    characters: state.characters,
-    games: state.games,
+    // characters: state.characters,
+    // games: state.games,
   }
 };
 
@@ -38,15 +38,12 @@ class DisplayElements extends Component {
   //navigates to proper details page, passing the selected element's data into the props of the Details component
   //if props.view is "true" then we are managing Character data. Otherwise, we are managing Game data
   navigate(element) {
-    // (this.props.view ? Actions.CharDetails : Actions.GameDetails)({subject: element})
     if (this.props.view) {
       this.props.selectCharacter(element)
       this.props.nav('CharDetails')
-      // Actions.CharDetails({subject: element})
     } else {
       this.props.selectGame(element)
       this.props.nav('GameDetails')
-      // Actions.GameDetails({subject: element})
     }
   }
 
