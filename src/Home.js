@@ -7,10 +7,14 @@ import {
   Text,
   View
 } from 'react-native';
-import axios from 'axios'; //axios for AJAX calls
-/* Utility Functions */
-import { loadFile } from './_utility/storageUtils.js';
+/* Helper Functions */
+import { buildAccount } from './_data/buildAccount.js';
+import { displayMatch } from './_utility/dataUtils.js';
+import { addCharacter } from './_data/manageData.js';
+import { loadFile, replaceFile } from './_utility/storageUtils.js';
+import { chkForm } from './_utility/formUtils.js';
 /* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
 import { path, api } from './_config.js';
 /* Import Custom Components */
 import Modal from 'react-native-modal';
@@ -64,14 +68,15 @@ class Home extends Component {
   }
 
   splitAccount(account) { //method to split the elements of props.account into their own states for individual manipulation throughout the app
-    this.props.setAssets(account.asset_types);
-    this.props.setChars(account.characters);
-    this.props.setCurrency(account.currency_systems);
-    this.props.setGames(account.games);
-    this.props.setItemTypes(account.item_types);
-    this.props.setItems(account.items);
-    this.props.setShopTypes(account.shop_types);
-    this.props.setShops(account.shops);
+    let mirror = Object.assign({}, account)
+    this.props.setAssets(mirror.asset_types);
+    this.props.setChars(mirror.characters);
+    this.props.setCurrency(mirror.currency_systems);
+    this.props.setGames(mirror.games);
+    this.props.setItemTypes(mirror.item_types);
+    this.props.setItems(mirror.items);
+    this.props.setShopTypes(mirror.shop_types);
+    this.props.setShops(mirror.shops);
   }
 
   componentDidMount() {
@@ -88,6 +93,7 @@ class Home extends Component {
           }
         })
     } else { //otherwise... (i.e. We navigated to the "Home" component from the "Auth" component, and accountData was set from there)
+      console.log('splitting')
       this.splitAccount(this.props.account); //split the data from the accountData object using the splitAccount method
       this.setState({ isLoaded: true }); //set the "isLoaded" state to "true"; this will transition from the load wheel to the actual component
     }
@@ -117,6 +123,8 @@ class Home extends Component {
 
           <DisplayElements //Display for all characters or games, depending on which is currently in view
             view={this.state.view}
+            characters={this.props.characters}
+            games={this.props.games}
             nav={navigate}
           />
 

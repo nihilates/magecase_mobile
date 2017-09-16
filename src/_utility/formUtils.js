@@ -1,4 +1,5 @@
 /* Helper Functions For Use With Forms */
+import { Alert } from 'react-native'; //for Alert usage
 
 module.exports = {
   //Method to verify that text input fields have all be filled with correct formatting

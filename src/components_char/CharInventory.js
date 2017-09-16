@@ -40,11 +40,13 @@ class CharInventory extends Component {
   }
 
   render() {
+    console.log('CHAR INVENTORY PROPS:',this.props)
+
     return (
       <View style={s.container}>
         <ScrollView>
           <Text style={s.title}>Character Inventory</Text>
-          {this.props.selectedChar.inventories.map((entry, i) => {
+          {(this.props.selectedChar.inventories ? this.props.selectedChar.inventories : []).map((entry, i) => {
             return (
               <ItemEntry key={i} index={i}
                 setSelection={this.props.setSelection}

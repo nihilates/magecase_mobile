@@ -1,20 +1,23 @@
+/* Modal Component To Create New Character or Game */
 import React, { Component } from 'react';
 import {
-  Picker,
   TextInput,
   TouchableOpacity,
   StyleSheet,
   Text,
   View
 } from 'react-native';
-import { Actions } from 'react-native-router-flux'; //router controls
 /* Helper Functions */
-import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
-import DropdownMenu from '../components_misc/DropdownMenu.js';
-import axios from 'axios'; //axios for AJAX calls
+import { replaceFile } from '../_utility/storageUtils.js';
+import { displayMatch } from '../_utility/dataUtils.js';
+import { addCharacter, mergeAll } from '../_data/manageData.js';
 import { chkForm } from '../_utility/formUtils.js';
-//import api configurations
+/* Import API Config */
+import axios from 'axios'; //axios for AJAX calls
 import { path, api } from '../_config.js';
+/* Import Custom Components */
+import DropdownMenu from '../components_misc/DropdownMenu.js';
+import { SimpleBtn } from '../components_misc/BasicCmpnts.js';
 /* Redux Hookup */
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -35,25 +38,37 @@ class ModalCreate extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedName: '', //name for character or game
-      selectedSystem: '', //currency system to be associated with character or game
+      selectedName: null, //name for character or game
+      selectedSystem: null, //currency system to be associated with character or game
     };
 
     this.submitData = this.submitData.bind(this);
   }
 
-  submitData() { //method to submit a new character/game to the database
-    let body = {userId: this.props.account.id, currencySystemId: this.state.selectedSystem}; //composes the body of the POST request
+  async submitData() { //method to submit a new character/game to the database
+    let created = {};
+    let currencySystem = displayMatch(this.props.currencySystems, 'id', this.state.selectedSystem);
+
+    let body = {//composes the body of the POST request
+      userId: this.props.account.id,
+      currencySystemId: this.state.selectedSystem,
+    };
     body[(this.props.view ? 'char_name' : 'game_name')] = this.state.selectedName; //depending on which view is currently selected, add the proper key for "char_name" or "game_name"
 
-    if (!chkForm(body)) { //If all forms haven't been filled...
-      return; //end the method
-    } else { //otherwise...
-      axios.post(path+(this.props.view ? api.char.create : api.game.create), body) //depending on which view is currently selected, use the API path for the correct database table
-        .then(resp => {console.log(resp)}) //TODO: Update the global account state here
-        .then(() => this.props.closeModal() )
-        .catch(error => console.error(error));
-    }
+    if (!this.state.selectedName || !this.state.selectedSystem) return; //end process if all forms haven't been filled
+
+    await axios.post(path+(this.props.view ? api.char.create : api.game.create), body) //depending on which view is currently selected, use the API path for the correct database table
+      .then(resp => {
+        created = resp.data;
+        console.log('CREATED NOW EQUALS:', created)
+      })
+      .catch(error => {
+        console.log(error)
+      });
+
+    addCharacter(this.props.characters, body.char_name, body, currencySystem, created, this.props.setChars)
+    replaceFile('accountData', Object.assign({}, this.props.account, {characters: this.props.characters}))
+    this.props.closeModal();
   }
 
   render() {

@@ -38,12 +38,10 @@ class MainNav extends Component {
     });
 
     removeFile('session');
-    // this.props.nav('Auth');
     if (this.props.stack) this.props.stack(reset);
   }
 
   render() {
-    console.log('MAIN NAV PROPS:', this.props)
     return (
       <View style={s.container}>
         <View style={s.controls}>

@@ -2,14 +2,44 @@
 
 module.exports = {
   /* Method to Merge All States and Save Them to Storage */
-  mergeAll: (states, callback) => { //"states" is an object of all states from the Redux store; keys of this object must be input
-    let account = Object.assign({}, states); //join all the states into a single object call "account"
-    callback(account); //invoke callback on account; this will likely be an AsyncStorage call
+  mergeAll: (account, states, callback, param) => { //"states" is an object of all states from the Redux store; keys of this object must be input
+    let updated = Object.assign({}, account, states); //join all the states into a single object call "account"
+    callback(param, updated); //invoke callback on account; this will likely be an AsyncStorage call
   },
 
-  /* Method to Add an Entry to an Array of Entries */
-  addTo: (array, data, count, character, resp, callback) => {
-    console.log(data)
+  /* Method to Add a Character to the List of Characters */
+  addCharacter: (array, charName, data, currencySys, created, callback) => {
+    const characters = array.map(i => {return i}); //create new array so as to avoid mutation in Redux
+
+    if (created.id) {
+    //if the response from the Axios request (called "created") has a key of "id",
+    //we know the request was successful, so we build our character from the response
+      created.currency_system = currencySys; //add the full details of the selected currency system to the character
+      created.inventories = []; //add an empty array for the character's inventory
+
+      characters.push(created); //push the properly formatted character into the characters array
+    } else { //If the Axios request did not complete, do the following...
+      let dt = new Date().toISOString(); //create a reference to the current date/time in ISO format
+      let char = { //define a character object
+        char_name: charName, //add the provided name
+        createdAt: dt, //set its creation date
+        currencySystemId: data.currencySystemId, //add the provided currencySystemId
+        currency_system: currencySys, //add the full details of the selected currency system to the character object
+        id: null, //TODO: A method for effectively assigning an ID to characters created offline is necessary
+        inventories: [], //add an empty array for the character's inventory
+        updatedAt: dt, //set its updatedAt date
+        userId: data.userId, //add the provided userId
+      };
+
+      characters.push(char); //push the properly formatted character into the characters array
+    }
+
+    //if a callback was provided...
+    if (callback) callback(characters); //run the callback on the newly formatted array; this will likely be a Redux action
+  },
+
+  /* Method to Add an Entry to an Inventory */
+  addInventory: (array, data, count, character, resp, callback) => {
     if (resp) {
       resp.item = data;
       array.push(resp); //push the "resp" into the submitted array
@@ -27,7 +57,6 @@ module.exports = {
 
       array.push(entry); //push the "entry" into the submitted array
     }
-
 
     if (callback) callback(array); //if a callback was supplied, run the callback on the array
   },
@@ -72,6 +101,10 @@ module.exports = {
 };
 
 /* Test Data - A pain to rewrite... */
+
+// function modRedux(object, key, newValue) {
+//   return object[key]
+// }
 
 // var inventory = [
 //   {
